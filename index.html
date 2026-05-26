@@ -1196,15 +1196,10 @@
             const PURCHASE_KEY = 'comot_purchases';
 
             function getProducts() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch (e) { return []; } }
-
             function saveProducts(p) { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }
-
             function getRatings() { try { return JSON.parse(localStorage.getItem(RATING_KEY)) || {}; } catch (e) { return {}; } }
-
             function saveRatings(r) { localStorage.setItem(RATING_KEY, JSON.stringify(r)); }
-
             function getPurchases() { try { return JSON.parse(localStorage.getItem(PURCHASE_KEY)) || {}; } catch (e) { return {}; } }
-
             function savePurchases(p) { localStorage.setItem(PURCHASE_KEY, JSON.stringify(p)); }
 
             let allProducts = getProducts();
@@ -1216,7 +1211,6 @@
             let currentRatingValue = 0;
             let uploadedFiles = [];
 
-            // DOM refs
             const $loadingScreen = document.getElementById('loadingScreen');
             const $captchaOverlay = document.getElementById('captchaOverlay');
             const $captchaChar = document.getElementById('captchaChar');
@@ -1258,12 +1252,10 @@
 
             // ==================== CAPTCHA ====================
             let captchaSolution = '';
-
             function randomCaptchaChar() {
                 const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
                 return chars[Math.floor(Math.random() * chars.length)];
             }
-
             function showCaptcha() {
                 captchaSolution = randomCaptchaChar();
                 $captchaChar.textContent = captchaSolution;
@@ -1272,7 +1264,6 @@
                 $captchaOverlay.classList.remove('hidden');
                 $captchaInput.focus();
             }
-
             function hideCaptcha() {
                 $captchaOverlay.classList.add('hidden');
                 sessionStorage.setItem('comot_captcha_passed', 'true');
@@ -1280,8 +1271,7 @@
             if (sessionStorage.getItem('comot_captcha_passed') === 'true') {
                 $captchaOverlay.classList.add('hidden');
             } else {
-                setTimeout(() => { if (!$loadingScreen.classList.contains('hidden') || $captchaOverlay.classList.contains(
-                            'hidden')) showCaptcha(); }, 2000);
+                setTimeout(() => { if (!$loadingScreen.classList.contains('hidden') || $captchaOverlay.classList.contains('hidden')) showCaptcha(); }, 2000);
             }
             $captchaSubmit.addEventListener('click', () => {
                 if ($captchaInput.value.trim().toUpperCase() === captchaSolution) hideCaptcha();
@@ -1297,8 +1287,7 @@
 
             // ==================== LOADING SCREEN ====================
             window.addEventListener('load', () => setTimeout(() => $loadingScreen.classList.add('hidden'), 1800));
-            setTimeout(() => { if (!$loadingScreen.classList.contains('hidden')) $loadingScreen.classList.add(
-                'hidden'); }, 2500);
+            setTimeout(() => { if (!$loadingScreen.classList.contains('hidden')) $loadingScreen.classList.add('hidden'); }, 2500);
 
             // ==================== TOAST ====================
             function showToast(msg, type = 'info') {
@@ -1311,34 +1300,26 @@
 
             // ==================== NAV TOGGLE ====================
             $navToggle.addEventListener('click', () => $navLinks.classList.toggle('open'));
-            document.addEventListener('click', e => { if (!$navToggle.contains(e.target) && !$navLinks.contains(e.target))
-                    $navLinks.classList.remove('open'); });
+            document.addEventListener('click', e => { if (!$navToggle.contains(e.target) && !$navLinks.contains(e.target)) $navLinks.classList.remove('open'); });
 
             // ==================== HELPER: STATUS & RATING ====================
             function getPurchaseCount(pid) { return allPurchases[pid] || 0; }
-
             function getRatingData(pid) {
                 const r = allRatings[pid] || {};
                 const vals = Object.values(r);
                 if (!vals.length) return { avg: 0, count: 0 };
                 return { avg: vals.reduce((a, b) => a + b, 0) / vals.length, count: vals.length };
             }
-
             function getTopTerlarisIds(limit = 5) {
-                return [...allProducts].sort((a, b) => getPurchaseCount(b.id) - getPurchaseCount(a.id)).slice(0, limit).map(p =>
-                    p.id);
+                return [...allProducts].sort((a, b) => getPurchaseCount(b.id) - getPurchaseCount(a.id)).slice(0, limit).map(p => p.id);
             }
-
             function getTopTerbaikIds(limit = 5) {
-                return [...allProducts].map(p => ({ id: p.id, score: getRatingData(p.id).avg * getRatingData(p.id).count +
-                        getPurchaseCount(p.id) })).sort((a, b) => b.score - a.score).slice(0, limit).map(s => s.id);
+                return [...allProducts].map(p => ({ id: p.id, score: getRatingData(p.id).avg * getRatingData(p.id).count + getPurchaseCount(p.id) })).sort((a, b) => b.score - a.score).slice(0, limit).map(s => s.id);
             }
-
             function isNew(prod) {
                 if (!prod.createdAt) return false;
                 return (Date.now() - new Date(prod.createdAt).getTime()) < 7 * 24 * 60 * 60 * 1000;
             }
-
             function getBadges(prod) {
                 const b = [];
                 const terlarisIds = getTopTerlarisIds();
@@ -1349,15 +1330,12 @@
                 else if (isNew(prod)) b.push({ type: 'baru', label: '🆕 Baru' });
                 return b;
             }
-
             function renderStars(avg) {
                 const full = Math.floor(avg);
                 const half = avg - full >= 0.5 ? 1 : 0;
                 return '★'.repeat(full) + (half ? '⯨' : '') + '☆'.repeat(5 - full - half);
             }
-
-            function escapeHTML(s) { const d = document.createElement('div');
-                d.textContent = s; return d.innerHTML; }
+            function escapeHTML(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
             function createProductCard(prod) {
                 const rating = getRatingData(prod.id);
@@ -1366,10 +1344,8 @@
                 const badges = getBadges(prod);
                 const isOwner = prod.owner === DEVICE_ID;
                 let sliderHTML = '';
-                if (fotos.length === 0) sliderHTML =
-                    `<img src="logo.png" style="object-fit:contain;background:#0d0d16;">`;
-                else if (fotos.length === 1) sliderHTML =
-                    `<img src="${fotos[0]}" alt="${escapeHTML(prod.nama)}" style="object-fit:contain;background:#0d0d16;">`;
+                if (fotos.length === 0) sliderHTML = `<img src="logo.png" style="object-fit:contain;background:#0d0d16;">`;
+                else if (fotos.length === 1) sliderHTML = `<img src="${fotos[0]}" alt="${escapeHTML(prod.nama)}" style="object-fit:contain;background:#0d0d16;">`;
                 else sliderHTML = `
                     <img src="${fotos[0]}" class="slider-img" data-index="0" style="object-fit:contain;background:#0d0d16;">
                     <button class="slider-nav prev" data-action="prev">◀</button>
@@ -1395,25 +1371,19 @@
                 let filtered = [...allProducts];
                 if (currentFilter === '🔥 Terlaris') filtered = filtered.filter(p => getTopTerlarisIds(5).includes(p.id));
                 else if (currentFilter === '⭐ Terbaik') filtered = filtered.filter(p => getTopTerbaikIds(5).includes(p.id));
-                else if (currentFilter !== 'semua') filtered = filtered.filter(p => p.kategori && p.kategori.toLowerCase() ===
-                    currentFilter.toLowerCase());
+                else if (currentFilter !== 'semua') filtered = filtered.filter(p => p.kategori && p.kategori.toLowerCase() === currentFilter.toLowerCase());
                 if (searchQuery.trim()) {
                     const q = searchQuery.trim().toLowerCase();
-                    filtered = filtered.filter(p => (p.nama || '').toLowerCase().includes(q) || (p.deskripsi || '').toLowerCase()
-                        .includes(q) || (p.kategori || '').toLowerCase().includes(q));
+                    filtered = filtered.filter(p => (p.nama || '').toLowerCase().includes(q) || (p.deskripsi || '').toLowerCase().includes(q) || (p.kategori || '').toLowerCase().includes(q));
                 }
                 $productGrid.innerHTML = filtered.length ? filtered.map(createProductCard).join('') : '';
                 $emptyState.style.display = filtered.length ? 'none' : 'block';
-                // Slider terlaris
                 const topTerlaris = getTopTerlarisIds(10);
                 const terlarisProds = allProducts.filter(p => topTerlaris.includes(p.id));
-                $sliderTerlaris.innerHTML = terlarisProds.length ? terlarisProds.map(createProductCard).join('') :
-                    '<p style="color:var(--text3);padding:20px;">Belum ada produk terlaris</p>';
-                // Slider terbaik
+                $sliderTerlaris.innerHTML = terlarisProds.length ? terlarisProds.map(createProductCard).join('') : '<p style="color:var(--text3);padding:20px;">Belum ada produk terlaris</p>';
                 const topTerbaik = getTopTerbaikIds(10);
                 const terbaikProds = allProducts.filter(p => topTerbaik.includes(p.id));
-                $sliderTerbaik.innerHTML = terbaikProds.length ? terbaikProds.map(createProductCard).join('') :
-                    '<p style="color:var(--text3);padding:20px;">Belum ada produk terbaik</p>';
+                $sliderTerbaik.innerHTML = terbaikProds.length ? terbaikProds.map(createProductCard).join('') : '<p style="color:var(--text3);padding:20px;">Belum ada produk terbaik</p>';
                 attachCardEvents();
                 renderCategories();
             }
@@ -1427,14 +1397,10 @@
                     let idx = 0;
                     const img = slider.querySelector('.slider-img');
                     const dots = slider.querySelectorAll('[data-dot]');
-                    const update = (i) => { idx = i; if (img) img.src = fotos[i];
-                        dots.forEach((d, j) => d.classList.toggle('active', j === i)); };
-                    slider.querySelector('[data-action="prev"]')?.addEventListener('click', e => { e.stopPropagation();
-                        update((idx - 1 + fotos.length) % fotos.length); });
-                    slider.querySelector('[data-action="next"]')?.addEventListener('click', e => { e.stopPropagation();
-                        update((idx + 1) % fotos.length); });
-                    dots.forEach(d => d.addEventListener('click', e => { e.stopPropagation();
-                        update(parseInt(d.dataset.dot)); }));
+                    const update = (i) => { idx = i; if (img) img.src = fotos[i]; dots.forEach((d, j) => d.classList.toggle('active', j === i)); };
+                    slider.querySelector('[data-action="prev"]')?.addEventListener('click', e => { e.stopPropagation(); update((idx - 1 + fotos.length) % fotos.length); });
+                    slider.querySelector('[data-action="next"]')?.addEventListener('click', e => { e.stopPropagation(); update((idx + 1) % fotos.length); });
+                    dots.forEach(d => d.addEventListener('click', e => { e.stopPropagation(); update(parseInt(d.dataset.dot)); }));
                 });
                 document.querySelectorAll('.product-card').forEach(card => {
                     const pid = card.dataset.pid;
@@ -1444,17 +1410,14 @@
                 });
             }
 
-            // ==================== KATEGORI ====================
             function renderCategories() {
                 const existing = [...new Set(allProducts.map(p => p.kategori).filter(Boolean))];
-                // Hapus tombol kategori kecuali 3 utama
                 const buttons = $categorySection.querySelectorAll('.cat-btn');
                 buttons.forEach(b => {
                     const cat = b.dataset.cat;
                     if (cat === 'semua' || cat === '🔥 Terlaris' || cat === '⭐ Terbaik') return;
                     if (!existing.includes(cat)) b.remove();
                 });
-                // Tambahkan kategori baru
                 existing.forEach(cat => {
                     if (!$categorySection.querySelector(`[data-cat="${CSS.escape(cat)}"]`)) {
                         const btn = document.createElement('button');
@@ -1465,10 +1428,7 @@
                         $categorySection.appendChild(btn);
                     }
                 });
-                // Update active
-                $categorySection.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat ===
-                    currentFilter));
-                // Update datalist
+                $categorySection.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === currentFilter));
                 $kategoriList.innerHTML = existing.map(c => `<option value="${c}">`).join('');
             }
 
@@ -1489,11 +1449,7 @@
                 $searchSuggestions.innerHTML = prods.map(p => {
                     const r = getRatingData(p.id);
                     const img = p.foto?.[0] || 'logo.png';
-                    return `<div class="suggestion-item" data-pid="${p.id}">
-                        <img src="${img}" onerror="this.src='logo.png'">
-                        <div class="sug-info"><div class="sug-name">${escapeHTML(p.nama)}</div>
-                        <div class="sug-meta">⭐${r.avg.toFixed(1)} · ${getPurchaseCount(p.id)} laku</div></div>
-                    </div>`;
+                    return `<div class="suggestion-item" data-pid="${p.id}"><img src="${img}" onerror="this.src='logo.png'"><div class="sug-info"><div class="sug-name">${escapeHTML(p.nama)}</div><div class="sug-meta">⭐${r.avg.toFixed(1)} · ${getPurchaseCount(p.id)} laku</div></div></div>`;
                 }).join('');
                 $searchSuggestions.classList.add('show');
             }
@@ -1512,8 +1468,7 @@
                     openDetail(pid);
                 }
             });
-            document.addEventListener('click', e => { if (!$searchWrap.contains(e.target)) $searchSuggestions.classList.remove(
-                    'show'); });
+            document.addEventListener('click', e => { if (!$searchWrap.contains(e.target)) $searchSuggestions.classList.remove('show'); });
             const $searchWrap = document.getElementById('searchWrap');
 
             // ==================== DETAIL MODAL ====================
@@ -1524,16 +1479,10 @@
                 const fotos = prod.foto || [];
                 const badges = getBadges(prod);
                 let sliderHTML = '';
-                if (fotos.length === 0) sliderHTML =
-                    `<img src="logo.png" style="object-fit:contain;width:100%;height:100%;">`;
-                else if (fotos.length === 1) sliderHTML =
-                    `<img src="${fotos[0]}" style="object-fit:contain;width:100%;height:100%;">`;
-                else sliderHTML = `
-                    <img src="${fotos[0]}" id="detailMainImg" style="object-fit:contain;width:100%;height:100%;">
-                    <button class="detail-slider-nav prev" id="detailPrev">◀</button>
-                    <button class="detail-slider-nav next" id="detailNext">▶</button>`;
-                const dotsHTML = fotos.length > 1 ? `<div class="detail-dots" id="detailDots">${fotos.map((_, i) =>
-                    `<span data-dot="${i}" class="${i===0?'active':''}"></span>`).join('')}</div>` : '';
+                if (fotos.length === 0) sliderHTML = `<img src="logo.png" style="object-fit:contain;width:100%;height:100%;">`;
+                else if (fotos.length === 1) sliderHTML = `<img src="${fotos[0]}" style="object-fit:contain;width:100%;height:100%;">`;
+                else sliderHTML = `<img src="${fotos[0]}" id="detailMainImg" style="object-fit:contain;width:100%;height:100%;"><button class="detail-slider-nav prev" id="detailPrev">◀</button><button class="detail-slider-nav next" id="detailNext">▶</button>`;
+                const dotsHTML = fotos.length > 1 ? `<div class="detail-dots" id="detailDots">${fotos.map((_, i) => `<span data-dot="${i}" class="${i===0?'active':''}"></span>`).join('')}</div>` : '';
                 $modalDetailContent.innerHTML = `
                     <button class="close-modal" id="closeDetail">&times;</button>
                     <div class="detail-img-slider" id="detailSlider">${sliderHTML}</div>${dotsHTML}
@@ -1541,18 +1490,13 @@
                     <div class="detail-price">${escapeHTML(prod.harga||'Gratis')}</div>
                     <div class="detail-meta"><span>🏷️ ${escapeHTML(prod.kategori||'-')}</span><span>⭐ ${rating.avg.toFixed(1)} (${rating.count})</span><span>🛒 ${getPurchaseCount(pid)}</span><span>📞 ${escapeHTML(prod.kontakPenjual||'')}</span></div>
                     <div class="detail-desc">${escapeHTML(prod.deskripsi||'')}</div>
-                    <div class="detail-actions">
-                        <button class="btn-beli" id="detailBeli">Beli</button>
-                        <button class="btn-detail" id="detailRating">Rating</button>
-                        ${prod.owner===DEVICE_ID?'<button class="btn-hapus" id="detailHapus">Hapus</button>':''}
-                    </div>`;
+                    <div class="detail-actions"><button class="btn-beli" id="detailBeli">Beli</button><button class="btn-detail" id="detailRating">Rating</button>${prod.owner===DEVICE_ID?'<button class="btn-hapus" id="detailHapus">Hapus</button>':''}</div>`;
                 $modalDetail.classList.add('active');
                 if (fotos.length > 1) {
                     let idx = 0;
                     const img = document.getElementById('detailMainImg');
                     const dots = document.querySelectorAll('#detailDots [data-dot]');
-                    const upd = (i) => { idx = i; if (img) img.src = fotos[i];
-                        dots.forEach((d, j) => d.classList.toggle('active', j === i)); };
+                    const upd = (i) => { idx = i; if (img) img.src = fotos[i]; dots.forEach((d, j) => d.classList.toggle('active', j === i)); };
                     document.getElementById('detailPrev').onclick = () => upd((idx - 1 + fotos.length) % fotos.length);
                     document.getElementById('detailNext').onclick = () => upd((idx + 1) % fotos.length);
                     dots.forEach(d => d.onclick = () => upd(parseInt(d.dataset.dot)));
@@ -1561,11 +1505,9 @@
                 document.getElementById('detailBeli').onclick = () => handleBeli(pid);
                 document.getElementById('detailRating').onclick = () => openRating(pid);
                 const hapusBtn = document.getElementById('detailHapus');
-                if (hapusBtn) hapusBtn.onclick = () => { handleHapus(pid);
-                    $modalDetail.classList.remove('active'); };
+                if (hapusBtn) hapusBtn.onclick = () => { handleHapus(pid); $modalDetail.classList.remove('active'); };
             }
-            $modalDetail.addEventListener('click', e => { if (e.target === $modalDetail) $modalDetail.classList.remove(
-                    'active'); });
+            $modalDetail.addEventListener('click', e => { if (e.target === $modalDetail) $modalDetail.classList.remove('active'); });
 
             // ==================== RATING ====================
             function openRating(pid) {
@@ -1585,15 +1527,13 @@
             });
             $ratingStars.addEventListener('mouseleave', () => {
                 if (currentRatingProductId === null) return;
-                $ratingStars.querySelectorAll('.star').forEach((s, i) => { s.classList.toggle('hover', false);
-                    s.classList.toggle('selected', i < currentRatingValue); });
+                $ratingStars.querySelectorAll('.star').forEach((s, i) => { s.classList.toggle('hover', false); s.classList.toggle('selected', i < currentRatingValue); });
             });
             $ratingStars.addEventListener('click', e => {
                 const star = e.target.closest('.star');
                 if (!star || currentRatingProductId === null) return;
                 currentRatingValue = parseInt(star.dataset.val);
-                $ratingStars.querySelectorAll('.star').forEach((s, i) => s.classList.toggle('selected', i <
-                    currentRatingValue));
+                $ratingStars.querySelectorAll('.star').forEach((s, i) => s.classList.toggle('selected', i < currentRatingValue));
                 $ratingHint.textContent = 'Anda memilih ' + currentRatingValue + ' bintang';
             });
             $btnSubmitRating.addEventListener('click', () => {
@@ -1607,10 +1547,8 @@
                 currentRatingValue = 0;
                 renderAll();
             });
-            document.getElementById('closeModalRating').onclick = () => { $modalRating.classList.remove('active');
-                currentRatingProductId = null; };
-            $modalRating.addEventListener('click', e => { if (e.target === $modalRating) $modalRating.classList.remove(
-                    'active'); });
+            document.getElementById('closeModalRating').onclick = () => { $modalRating.classList.remove('active'); currentRatingProductId = null; };
+            $modalRating.addEventListener('click', e => { if (e.target === $modalRating) $modalRating.classList.remove('active'); });
 
             // ==================== BELI ====================
             function handleBeli(pid) {
@@ -1618,12 +1556,10 @@
                 if (!prod) return;
                 const kontak = prod.kontakPenjual?.trim();
                 if (!kontak || !kontak.startsWith('https://')) { showToast('Kontak tidak valid.', 'error'); return; }
-                const pesan =
-                    `Halo, saya ingin membeli ${prod.nama}\nKategori: ${prod.kategori||'-'}\nHarga: ${prod.harga||'Gratis'}\nApakah masih tersedia?`;
+                const pesan = `Halo, saya ingin membeli ${prod.nama}\nKategori: ${prod.kategori||'-'}\nHarga: ${prod.harga||'Gratis'}\nApakah masih tersedia?`;
                 let link = kontak;
                 if (link.includes('t.me')) link += (link.includes('?') ? '&' : '?') + 'text=' + encodeURIComponent(pesan);
-                else if (link.includes('wa.me')) link += (link.includes('?') ? '&' : '?') + 'text=' + encodeURIComponent(
-                pesan);
+                else if (link.includes('wa.me')) link += (link.includes('?') ? '&' : '?') + 'text=' + encodeURIComponent(pesan);
                 window.open(link, '_blank');
                 allPurchases[pid] = (allPurchases[pid] || 0) + 1;
                 savePurchases(allPurchases);
@@ -1650,9 +1586,7 @@
             // ==================== TAMBAH PRODUK ====================
             $inputFoto.addEventListener('change', () => {
                 uploadedFiles = Array.from($inputFoto.files);
-                if (uploadedFiles.length > 2) { showToast('Maks 2 foto.', 'error');
-                    $inputFoto.value = '';
-                    uploadedFiles = []; }
+                if (uploadedFiles.length > 2) { showToast('Maks 2 foto.', 'error'); $inputFoto.value = ''; uploadedFiles = []; }
                 $fileInfo.textContent = uploadedFiles.length + '/2 foto';
             });
             document.getElementById('btnTambahProduk').addEventListener('click', () => {
@@ -1663,25 +1597,14 @@
                 $modalTambah.classList.add('active');
             });
             document.getElementById('closeModalTambah').onclick = () => $modalTambah.classList.remove('active');
-            $modalTambah.addEventListener('click', e => { if (e.target === $modalTambah) $modalTambah.classList.remove(
-                    'active'); });
+            $modalTambah.addEventListener('click', e => { if (e.target === $modalTambah) $modalTambah.classList.remove('active'); });
 
             function validateForm() {
                 let ok = true;
                 $errNama.style.display = $errKategori.style.display = $errKontak.style.display = 'none';
-                const nama = $inputNama.value.trim(),
-                    kat = $inputKategori.value.trim(),
-                    kontak = $inputKontak.value.trim();
-                if (nama && kat && !nama.toLowerCase().startsWith(kat.toLowerCase())) {
-                    $errNama.textContent = 'Nama harus diawali kategori';
-                    $errNama.style.display = 'block';
-                    ok = false;
-                }
-                if (kontak && !kontak.startsWith('https://')) {
-                    $errKontak.textContent = 'Kontak wajib https://';
-                    $errKontak.style.display = 'block';
-                    ok = false;
-                }
+                const nama = $inputNama.value.trim(), kat = $inputKategori.value.trim(), kontak = $inputKontak.value.trim();
+                if (nama && kat && !nama.toLowerCase().startsWith(kat.toLowerCase())) { $errNama.textContent = 'Nama harus diawali kategori'; $errNama.style.display = 'block'; ok = false; }
+                if (kontak && !kontak.startsWith('https://')) { $errKontak.textContent = 'Kontak wajib https://'; $errKontak.style.display = 'block'; ok = false; }
                 return ok;
             }
             $inputNama.addEventListener('input', validateForm);
@@ -1694,14 +1617,10 @@
                     reader.onload = e => {
                         const img = new Image();
                         img.onload = () => {
-                            let w = img.width,
-                                h = img.height;
-                            if (w > max || h > max) { const r = Math.min(max / w, max / h);
-                                w = Math.round(w * r);
-                                h = Math.round(h * r); }
+                            let w = img.width, h = img.height;
+                            if (w > max || h > max) { const r = Math.min(max / w, max / h); w = Math.round(w * r); h = Math.round(h * r); }
                             const canvas = document.createElement('canvas');
-                            canvas.width = w;
-                            canvas.height = h;
+                            canvas.width = w; canvas.height = h;
                             canvas.getContext('2d').drawImage(img, 0, 0, w, h);
                             resolve(canvas.toDataURL('image/jpeg', 0.8));
                         };
@@ -1715,11 +1634,7 @@
             $formTambahProduk.addEventListener('submit', async e => {
                 e.preventDefault();
                 if (!validateForm()) return;
-                const nama = $inputNama.value.trim(),
-                    desk = $inputDeskripsi.value.trim(),
-                    harga = $inputHarga.value.trim(),
-                    kat = $inputKategori.value.trim(),
-                    kontak = $inputKontak.value.trim();
+                const nama = $inputNama.value.trim(), desk = $inputDeskripsi.value.trim(), harga = $inputHarga.value.trim(), kat = $inputKategori.value.trim(), kontak = $inputKontak.value.trim();
                 if (!nama || !kat || !kontak) { showToast('Lengkapi field wajib.', 'error'); return; }
                 const fotos = [];
                 for (const f of uploadedFiles) {
@@ -1728,13 +1643,8 @@
                 const newProd = {
                     id: 'p_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
                     owner: DEVICE_ID,
-                    nama,
-                    deskripsi: desk,
-                    harga: harga || 'Gratis',
-                    kategori: kat,
-                    kontakPenjual: kontak,
-                    foto: fotos,
-                    createdAt: new Date().toISOString()
+                    nama, deskripsi: desk, harga: harga || 'Gratis', kategori: kat, kontakPenjual: kontak,
+                    foto: fotos, createdAt: new Date().toISOString()
                 };
                 allProducts.unshift(newProd);
                 saveProducts(allProducts);
@@ -1744,45 +1654,49 @@
             });
 
             // ==================== MODAL INFO ====================
-            function openInfo(title, content) {
-                $modalInfoContent.innerHTML =
-                    `<button class="close-modal" id="closeInfo">&times;</button><h3>${title}</h3><div style="color:var(--text2);margin-top:10px;">${content}</div>`;
+            function openInfo(title, htmlContent) {
+                $modalInfoContent.innerHTML = `<button class="close-modal" id="closeInfo">&times;</button><h3>${title}</h3><div style="color:var(--text2);margin-top:12px;line-height:1.8;">${htmlContent}</div>`;
                 $modalInfo.classList.add('active');
                 document.getElementById('closeInfo').onclick = () => $modalInfo.classList.remove('active');
             }
             $modalInfo.addEventListener('click', e => { if (e.target === $modalInfo) $modalInfo.classList.remove('active'); });
-            document.getElementById('btnTentang').onclick = () => openInfo('Tentang',
-                '<p>🛍️ <strong>COMOT STORE</strong> adalah marketplace produk digital premium yang menghubungkan kreator dan pembeli dalam satu platform <span style="color:var(--accent);">cepat, ringan, dan modern</span>.</p>
-<p>📦 Temukan berbagai produk digital seperti <strong>Poster, Script, Ebook, Bot Telegram, Template UI, Rak Dapur</strong>, dan masih banyak lagi.</p>
-<p>💾 Semua data disimpan secara lokal di perangkat Anda menggunakan localStorage, <strong>tanpa server eksternal</strong>, sehingga privasi Anda tetap aman.</p>
-<p>🎨 Desain elegan dengan tema <span style="color:#3b82f6;">Hitam + Biru</span>, glassmorphism, animasi halus, dan responsif di semua perangkat.</p>
-<p>⚡ Dibangun dengan HTML, CSS, JavaScript murni dalam satu file. Siap hosting, tanpa database.</p>.');
-            document.getElementById('btnPrivasi').onclick = () => openInfo('Privasi',
-                '<p>🔐 <strong>Privasi Anda adalah prioritas kami.</strong></p>
-<ul style="padding-left:20px;margin-top:8px;">
-  <li>📁 Seluruh data (produk, rating, pembelian) hanya tersimpan di <strong>localStorage</strong> perangkat Anda.</li>
-  <li>🚫 Kami <strong>tidak mengumpulkan, menyimpan, atau membagikan</strong> data pribadi ke pihak mana pun.</li>
-  <li>🍪 <strong>Tidak ada cookie</strong>, pelacakan, atau analitik yang digunakan.</li>
-  <li>🗑️ Anda memiliki kendali penuh: hapus cache browser = semua data terhapus.</li>
-  <li>🔒 Tidak ada data yang dikirim ke server eksternal, sehingga privasi Anda sepenuhnya terlindungi.</li>
-</ul>.');
-            document.getElementById('btnSyarat').onclick = () => openInfo('Syarat',
-                '<p>📜 Dengan menggunakan COMOT STORE, Anda setuju dengan ketentuan berikut:</p>
-<ul style="padding-left:20px;margin-top:8px;">
-  <li>🚫 Dilarang mengunggah konten <strong>spam, SARA, pornografi, atau ilegal</strong>.</li>
-  <li>⚠️ Penjual bertanggung jawab penuh atas keaslian, kualitas, dan legalitas produk.</li>
-  <li>✅ Produk wajib sesuai dengan deskripsi dan kategori yang dipilih.</li>
-  <li>⚖️ COMOT STORE hanya bertindak sebagai <strong>platform perantara</strong>, tidak bertanggung jawab atas transaksi antara penjual dan pembeli.</li>
-  <li>🛡️ Penyalahgunaan akan mengakibatkan penghapusan produk dan pemblokiran akses.</li>
-</ul>
-<p style="margin-top:8px;">✨ Gunakan platform ini dengan bijak dan saling menghormati.</p> ');
+
+            document.getElementById('btnTentang').onclick = () => openInfo('📖 Tentang COMOT STORE', `
+                <p>🛍️ <strong>COMOT STORE</strong> adalah marketplace produk digital premium yang menghubungkan kreator dan pembeli dalam satu platform <span style="color:var(--accent);">cepat, ringan, dan modern</span>.</p>
+                <p>📦 Temukan berbagai produk digital seperti <strong>Poster, Script, Ebook, Bot Telegram, Template UI, Rak Dapur</strong>, dan masih banyak lagi.</p>
+                <p>💾 Semua data disimpan secara lokal di perangkat Anda menggunakan localStorage, <strong>tanpa server eksternal</strong>, sehingga privasi Anda tetap aman.</p>
+                <p>🎨 Desain elegan dengan tema <span style="color:#3b82f6;">Hitam + Biru</span>, glassmorphism, animasi halus, dan responsif di semua perangkat.</p>
+                <p>⚡ semoga website ini bermanfaat dan berguna untuk semuanya 
+            `);
+
+            document.getElementById('btnPrivasi').onclick = () => openInfo('🔒 Kebijakan Privasi', `
+                <p>🔐 <strong>Privasi Anda adalah prioritas kami.</strong></p>
+                <ul style="padding-left:20px; margin-top:8px;">
+                    <li>📁 Seluruh data (produk, rating, pembelian) hanya tersimpan di <strong>localStorage</strong> perangkat Anda.</li>
+                    <li>🚫 Kami <strong>tidak mengumpulkan, menyimpan, atau membagikan</strong> data pribadi ke pihak mana pun.</li>
+                    <li>🍪 <strong>Tidak ada cookie</strong>, pelacakan, atau analitik yang digunakan.</li>
+                    <li>🗑️ Anda memiliki kendali penuh: hapus cache browser = semua data terhapus.</li>
+                    <li>🔒 Tidak ada data yang dikirim ke server eksternal, sehingga privasi Anda sepenuhnya terlindungi.</li>
+                </ul>
+            `);
+
+            document.getElementById('btnSyarat').onclick = () => openInfo('📜 Syarat & Ketentuan', `
+                <p>📜 Dengan menggunakan COMOT STORE, Anda setuju dengan ketentuan berikut:</p>
+                <ul style="padding-left:20px; margin-top:8px;">
+                    <li>🚫 Dilarang mengunggah konten <strong>spam, SARA, pornografi, atau ilegal</strong>.</li>
+                    <li>⚠️ Penjual bertanggung jawab penuh atas keaslian, kualitas, dan legalitas produk.</li>
+                    <li>✅ Produk wajib sesuai dengan deskripsi dan kategori yang dipilih.</li>
+                    <li>⚖️ COMOT STORE hanya bertindak sebagai <strong>platform perantara</strong>, tidak bertanggung jawab atas transaksi antara penjual dan pembeli.</li>
+                    <li>🛡️ Penyalahgunaan akan mengakibatkan pemblokiran akses dan bisa juga sanksi ataupun pidana.</li>
+                </ul>
+                <p style="margin-top:8px;">✨ Gunakan platform ini dengan bijak dan saling menghormati.</p>
+            `);
 
             // ==================== INIT ====================
             renderAll();
             document.addEventListener('keydown', e => {
                 if (e.key === 'Escape') {
-                    [$modalTambah, $modalDetail, $modalRating, $modalInfo].forEach(m => m.classList.remove(
-                        'active'));
+                    [$modalTambah, $modalDetail, $modalRating, $modalInfo].forEach(m => m.classList.remove('active'));
                 }
             });
         })();
