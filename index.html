@@ -1752,11 +1752,30 @@
             }
             $modalInfo.addEventListener('click', e => { if (e.target === $modalInfo) $modalInfo.classList.remove('active'); });
             document.getElementById('btnTentang').onclick = () => openInfo('Tentang',
-                'COMOT STORE marketplace digital premium. Data disimpan lokal.');
+                '<p>🛍️ <strong>COMOT STORE</strong> adalah marketplace produk digital premium yang menghubungkan kreator dan pembeli dalam satu platform <span style="color:var(--accent);">cepat, ringan, dan modern</span>.</p>
+<p>📦 Temukan berbagai produk digital seperti <strong>Poster, Script, Ebook, Bot Telegram, Template UI, Rak Dapur</strong>, dan masih banyak lagi.</p>
+<p>💾 Semua data disimpan secara lokal di perangkat Anda menggunakan localStorage, <strong>tanpa server eksternal</strong>, sehingga privasi Anda tetap aman.</p>
+<p>🎨 Desain elegan dengan tema <span style="color:#3b82f6;">Hitam + Biru</span>, glassmorphism, animasi halus, dan responsif di semua perangkat.</p>
+<p>⚡ Dibangun dengan HTML, CSS, JavaScript murni dalam satu file. Siap hosting, tanpa database.</p>.');
             document.getElementById('btnPrivasi').onclick = () => openInfo('Privasi',
-                'Data hanya di localStorage, tidak dijual.');
+                '<p>🔐 <strong>Privasi Anda adalah prioritas kami.</strong></p>
+<ul style="padding-left:20px;margin-top:8px;">
+  <li>📁 Seluruh data (produk, rating, pembelian) hanya tersimpan di <strong>localStorage</strong> perangkat Anda.</li>
+  <li>🚫 Kami <strong>tidak mengumpulkan, menyimpan, atau membagikan</strong> data pribadi ke pihak mana pun.</li>
+  <li>🍪 <strong>Tidak ada cookie</strong>, pelacakan, atau analitik yang digunakan.</li>
+  <li>🗑️ Anda memiliki kendali penuh: hapus cache browser = semua data terhapus.</li>
+  <li>🔒 Tidak ada data yang dikirim ke server eksternal, sehingga privasi Anda sepenuhnya terlindungi.</li>
+</ul>.');
             document.getElementById('btnSyarat').onclick = () => openInfo('Syarat',
-                'Dilarang spam/konten ilegal. Penjual bertanggung jawab.');
+                '<p>📜 Dengan menggunakan COMOT STORE, Anda setuju dengan ketentuan berikut:</p>
+<ul style="padding-left:20px;margin-top:8px;">
+  <li>🚫 Dilarang mengunggah konten <strong>spam, SARA, pornografi, atau ilegal</strong>.</li>
+  <li>⚠️ Penjual bertanggung jawab penuh atas keaslian, kualitas, dan legalitas produk.</li>
+  <li>✅ Produk wajib sesuai dengan deskripsi dan kategori yang dipilih.</li>
+  <li>⚖️ COMOT STORE hanya bertindak sebagai <strong>platform perantara</strong>, tidak bertanggung jawab atas transaksi antara penjual dan pembeli.</li>
+  <li>🛡️ Penyalahgunaan akan mengakibatkan penghapusan produk dan pemblokiran akses.</li>
+</ul>
+<p style="margin-top:8px;">✨ Gunakan platform ini dengan bijak dan saling menghormati.</p> ');
 
             // ==================== INIT ====================
             renderAll();
