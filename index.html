@@ -28,7 +28,6 @@
             --glass-border: rgba(255, 255, 255, 0.08);
             --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
         * {
             margin: 0;
             padding: 0;
@@ -130,6 +129,93 @@
             50% {
                 opacity: 1;
             }
+        }
+
+        /* ==================== CAPTCHA OVERLAY ==================== */
+        #captchaOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 100000;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        #captchaOverlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .captcha-box {
+            background: var(--surface);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: 30px 24px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px var(--accent-glow2);
+            max-width: 360px;
+            width: 90%;
+            animation: modalIn 0.4s ease-out;
+        }
+        .captcha-box .captcha-display {
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: 8px;
+            color: #fff;
+            text-shadow: 0 0 15px var(--accent-glow);
+            margin-bottom: 14px;
+            user-select: none;
+        }
+        .captcha-box p {
+            color: var(--text2);
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+        }
+        .captcha-box input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 50px;
+            border: 2px solid var(--glass-border);
+            background: var(--surface2);
+            color: #fff;
+            font-size: 1rem;
+            text-align: center;
+            letter-spacing: 3px;
+            outline: none;
+            transition: var(--transition);
+        }
+        .captcha-box input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 18px var(--accent-glow2);
+        }
+        .captcha-box .captcha-error {
+            color: #ef4444;
+            font-size: 0.8rem;
+            margin-top: 6px;
+            display: none;
+        }
+        .captcha-box button {
+            margin-top: 16px;
+            width: 100%;
+            padding: 12px;
+            border-radius: 50px;
+            background: var(--accent);
+            color: #fff;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+            transition: var(--transition);
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+        }
+        .captcha-box button:hover {
+            background: #2563eb;
+            box-shadow: 0 6px 28px rgba(59, 130, 246, 0.5);
         }
 
         /* ==================== NAVBAR ==================== */
@@ -528,18 +614,25 @@
             width: 18px;
             border-radius: 10px;
         }
-        .product-card .badge {
+        .product-card .badges {
             position: absolute;
             top: 20px;
             left: 20px;
             z-index: 3;
-            padding: 4px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            pointer-events: none;
+        }
+        .badge {
+            padding: 3px 8px;
             border-radius: 50px;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 700;
             letter-spacing: 0.5px;
-            pointer-events: none;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+            white-space: nowrap;
+            width: fit-content;
         }
         .badge-terlaris {
             background: #f59e0b;
@@ -1123,6 +1216,18 @@
         <div class="loading-text">COMOT STORE</div>
     </div>
 
+    <!-- ==================== CAPTCHA OVERLAY ==================== -->
+    <div id="captchaOverlay">
+        <div class="captcha-box">
+            <p>🔐 Verifikasi: Anda bukan bot</p>
+            <div class="captcha-display" id="captchaChar">A</div>
+            <p>Ketik huruf di atas</p>
+            <input type="text" id="captchaInput" maxlength="1" placeholder="Masukkan huruf" autocomplete="off">
+            <div class="captcha-error" id="captchaError">Huruf tidak cocok, coba lagi.</div>
+            <button id="captchaSubmit">Verifikasi</button>
+        </div>
+    </div>
+
     <!-- ==================== NAVBAR ==================== -->
     <nav id="navbar">
         <a href="#" class="nav-brand" title="COMOT STORE - Beranda">
@@ -1213,9 +1318,9 @@
             <h3 style="margin-bottom:16px;">📦 Tambah Produk Baru</h3>
             <form id="formTambahProduk" enctype="multipart/form-data">
                 <div class="form-group">
-                    <label>📸 Upload Foto (maks 6)</label>
+                    <label>📸 Upload Foto (maks 2)</label>
                     <input type="file" id="inputFoto" accept="image/*" multiple>
-                    <div class="file-info" id="fileInfo">0/6 foto dipilih</div>
+                    <div class="file-info" id="fileInfo">0/2 foto dipilih</div>
                 </div>
                 <div class="form-group">
                     <label>📝 Nama Produk <span style="color:#ef4444;">*</span></label>
@@ -1232,21 +1337,14 @@
                 </div>
                 <div class="form-group">
                     <label>🏷️ Kategori Produk <span style="color:#ef4444;">*</span></label>
-                    <input type="text" id="inputKategori" placeholder="contoh: Poster, Script, Ebook, Bot Telegram, Template, Rak Dapur" required list="kategoriList">
+                    <input type="text" id="inputKategori" placeholder="contoh: Poster, Script, Ebook" required list="kategoriList">
                     <datalist id="kategoriList"></datalist>
                     <div class="error-msg" id="errKategori"></div>
                 </div>
                 <div class="form-group">
-                    <label>📞 Kontak Penjual <span style="color:#ef4444;">*</span></label>
-                    <input type="text" id="inputKontak" placeholder="https://t.me/username atau @username atau WhatsApp" required>
-                </div>
-                <div class="form-group">
-                    <label>🏅 Status Produk</label>
-                    <select id="inputStatus">
-                        <option value="Baru">🆕 Baru</option>
-                        <option value="Terlaris">🔥 Terlaris</option>
-                        <option value="Terbaik">⭐ Terbaik</option>
-                    </select>
+                    <label>📞 Kontak Penjual <span style="color:#ef4444;">* (wajib https://)</span></label>
+                    <input type="text" id="inputKontak" placeholder="https://t.me/username atau https://wa.me/628xxx" required>
+                    <div class="error-msg" id="errKontak"></div>
                 </div>
                 <button type="submit" class="btn-submit">✅ Tambahkan Produk</button>
             </form>
@@ -1276,7 +1374,7 @@
         </div>
     </div>
 
-    <!-- ==================== MODAL: INFO (TENTANG/PRIVASI/SYARAT) ==================== -->
+    <!-- ==================== MODAL: INFO ==================== -->
     <div class="modal-overlay" id="modalInfo">
         <div class="modal" id="modalInfoContent" style="max-width:550px;"></div>
     </div>
@@ -1347,6 +1445,11 @@
 
             // ==================== DOM REFS ====================
             const $loadingScreen = document.getElementById('loadingScreen');
+            const $captchaOverlay = document.getElementById('captchaOverlay');
+            const $captchaChar = document.getElementById('captchaChar');
+            const $captchaInput = document.getElementById('captchaInput');
+            const $captchaError = document.getElementById('captchaError');
+            const $captchaSubmit = document.getElementById('captchaSubmit');
             const $productGrid = document.getElementById('productGrid');
             const $emptyState = document.getElementById('emptyState');
             const $sliderTerlaris = document.getElementById('sliderTerlaris');
@@ -1372,25 +1475,85 @@
             const $inputHarga = document.getElementById('inputHarga');
             const $inputKategori = document.getElementById('inputKategori');
             const $inputKontak = document.getElementById('inputKontak');
-            const $inputStatus = document.getElementById('inputStatus');
             const $errNama = document.getElementById('errNama');
             const $errKategori = document.getElementById('errKategori');
+            const $errKontak = document.getElementById('errKontak');
             const $kategoriList = document.getElementById('kategoriList');
             const $navToggle = document.getElementById('navToggle');
             const $navLinks = document.getElementById('navLinks');
 
             let uploadedFiles = [];
 
+            // ==================== CAPTCHA ====================
+            function generateRandomChar() {
+                const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ'; // tanpa I dan O agar tidak bingung
+                return chars[Math.floor(Math.random() * chars.length)];
+            }
+            let captchaSolution = '';
+
+            function showCaptcha() {
+                captchaSolution = generateRandomChar();
+                $captchaChar.textContent = captchaSolution;
+                $captchaInput.value = '';
+                $captchaError.style.display = 'none';
+                $captchaOverlay.classList.remove('hidden');
+                $captchaInput.focus();
+            }
+
+            function hideCaptcha() {
+                $captchaOverlay.classList.add('hidden');
+                sessionStorage.setItem('comot_captcha_passed', 'true');
+            }
+
+            // Cek session storage apakah sudah lolos captcha
+            if (sessionStorage.getItem('comot_captcha_passed') === 'true') {
+                $captchaOverlay.classList.add('hidden');
+            } else {
+                // Tampilkan captcha setelah loading screen hilang
+                setTimeout(() => {
+                    if (!$loadingScreen.classList.contains('hidden')) {
+                        // loading masih berlangsung, tunggu
+                    }
+                    showCaptcha();
+                }, 2000);
+            }
+
+            $captchaSubmit.addEventListener('click', () => {
+                const userInput = $captchaInput.value.trim().toUpperCase();
+                if (userInput === captchaSolution) {
+                    hideCaptcha();
+                } else {
+                    $captchaError.style.display = 'block';
+                    $captchaInput.value = '';
+                    captchaSolution = generateRandomChar();
+                    $captchaChar.textContent = captchaSolution;
+                    $captchaInput.focus();
+                }
+            });
+            $captchaInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    $captchaSubmit.click();
+                }
+            });
+
             // ==================== LOADING SCREEN ====================
             window.addEventListener('load', () => {
                 setTimeout(() => {
                     $loadingScreen.classList.add('hidden');
+                    // Jika captcha belum muncul, tampilkan sekarang
+                    if (sessionStorage.getItem('comot_captcha_passed') !== 'true' && $captchaOverlay.classList
+                        .contains('hidden')) {
+                        showCaptcha();
+                    }
                 }, 1800);
             });
-            // Fallback: jika load terlalu cepat
             setTimeout(() => {
                 if (!$loadingScreen.classList.contains('hidden')) {
                     $loadingScreen.classList.add('hidden');
+                    if (sessionStorage.getItem('comot_captcha_passed') !== 'true' && $captchaOverlay.classList
+                        .contains('hidden')) {
+                        showCaptcha();
+                    }
                 }
             }, 2500);
 
@@ -1429,7 +1592,6 @@
             }
 
             function renderCategoryButtons() {
-                // Hapus tombol kategori lama (kecuali 3 tombol pertama: Semua, Terlaris, Terbaik)
                 const existingButtons = $categorySection.querySelectorAll('.cat-btn');
                 const toRemove = [];
                 existingButtons.forEach(btn => {
@@ -1442,7 +1604,7 @@
 
                 const allCats = getAllCategories();
                 allCats.forEach(cat => {
-                    if (cat === '🔥 Terlaris' || cat === '⭐ Terbaik') return; // sudah ada
+                    if (cat === '🔥 Terlaris' || cat === '⭐ Terbaik') return;
                     if (!$categorySection.querySelector(`[data-cat="${CSS.escape(cat)}"]`)) {
                         const btn = document.createElement('button');
                         btn.className = 'cat-btn';
@@ -1455,13 +1617,11 @@
                     }
                 });
 
-                // Update active state
                 const allBtns = $categorySection.querySelectorAll('.cat-btn');
                 allBtns.forEach(b => {
                     b.classList.remove('active');
                     if (b.getAttribute('data-cat') === currentFilter) b.classList.add('active');
                 });
-                // Update datalist
                 $kategoriList.innerHTML = '';
                 allCats.forEach(cat => {
                     const opt = document.createElement('option');
@@ -1476,7 +1636,6 @@
                 renderAll();
             }
 
-            // Initial category buttons
             $categorySection.querySelectorAll('.cat-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const cat = btn.getAttribute('data-cat');
@@ -1484,7 +1643,47 @@
                 });
             });
 
-            // ==================== HELPER: RATING CALC ====================
+            // ==================== HELPER: DETERMINE DYNAMIC STATUS ====================
+            function getTopTerlarisIds(limit = 5) {
+                const sorted = [...allProducts].sort((a, b) => (getProductPurchaseCount(b.id) - getProductPurchaseCount(
+                    a.id)));
+                return sorted.slice(0, limit).map(p => p.id);
+            }
+
+            function getTopTerbaikIds(limit = 5) {
+                const scored = allProducts.map(p => {
+                    const r = getProductRating(p.id);
+                    const score = r.avg * r.count + getProductPurchaseCount(p.id);
+                    return { id: p.id, score };
+                });
+                scored.sort((a, b) => b.score - a.score);
+                return scored.slice(0, limit).map(s => s.id);
+            }
+
+            function isNewProduct(product) {
+                if (!product.createdAt) return false;
+                const now = Date.now();
+                const created = new Date(product.createdAt).getTime();
+                const sevenDays = 7 * 24 * 60 * 60 * 1000;
+                return (now - created) < sevenDays;
+            }
+
+            function getProductBadges(product) {
+                const badges = [];
+                const topTerlaris = getTopTerlarisIds();
+                const topTerbaik = getTopTerbaikIds();
+                if (topTerlaris.includes(product.id)) badges.push({ type: 'terlaris', label: '🔥 Produk Terlaris' });
+                if (topTerbaik.includes(product.id)) badges.push({ type: 'terbaik', label: '⭐ Produk Terbaik' });
+                if (isNewProduct(product) && !badges.some(b => b.type === 'terlaris' || b.type === 'terbaik')) {
+                    badges.push({ type: 'baru', label: '🆕 Produk Baru' });
+                } else if (isNewProduct(product)) {
+                    // jika sudah terlaris/terbaik, tetap bisa tambah badge baru jika masih dalam 7 hari
+                    badges.push({ type: 'baru', label: '🆕 Produk Baru' });
+                }
+                return badges;
+            }
+
+            // ==================== HELPER: RATING & PURCHASE ====================
             function getProductRating(productId) {
                 const ratings = allRatings[productId] || {};
                 const values = Object.values(ratings);
@@ -1504,7 +1703,7 @@
                 return '★'.repeat(full) + (half ? '⯨' : '') + '☆'.repeat(empty);
             }
 
-            // ==================== RENDER PRODUCT CARD HTML ====================
+            // ==================== RENDER PRODUCT CARD ====================
             function createProductCard(product) {
                 const rating = getProductRating(product.id);
                 const purchaseCount = getProductPurchaseCount(product.id);
@@ -1513,12 +1712,14 @@
                 const isOwner = product.owner === DEVICE_ID;
                 const fotos = product.foto || [];
                 const hasMultipleFotos = fotos.length > 1;
-                const badgeClass = product.status === 'Terlaris' ? 'badge-terlaris' :
-                    product.status === 'Terbaik' ? 'badge-terbaik' : 'badge-baru';
-                const badgeEmoji = product.status === 'Terlaris' ? '🔥' :
-                    product.status === 'Terbaik' ? '⭐' : '🆕';
-                const badgeLabel = product.status === 'Terlaris' ? 'Produk Terlaris' :
-                    product.status === 'Terbaik' ? 'Produk Terbaik' : 'Produk Baru';
+                const badges = getProductBadges(product);
+
+                let badgesHTML = '';
+                if (badges.length > 0) {
+                    badgesHTML = '<div class="badges">' +
+                        badges.map(b => `<span class="badge badge-${b.type}">${b.label}</span>`).join('') +
+                        '</div>';
+                }
 
                 let sliderHTML = '';
                 if (fotos.length === 0) {
@@ -1528,15 +1729,16 @@
                 } else {
                     sliderHTML = `
                 <img src="${fotos[0]}" alt="${escapeHTML(product.nama)}" class="slider-img" data-index="0" style="object-fit:contain;background:#0d0d16;">
-                ${hasMultipleFotos ? `<button class="slider-nav prev" data-action="prev">◀</button><button class="slider-nav next" data-action="next">▶</button>` : ''}
+                <button class="slider-nav prev" data-action="prev">◀</button>
+                <button class="slider-nav next" data-action="next">▶</button>
                 <div class="slider-dots">
                   ${fotos.map((_, i) => `<span data-dot="${i}" class="${i===0?'active':''}"></span>`).join('')}
                 </div>`;
                 }
 
                 return `
-            <div class="product-card" data-product-id="${product.id}" data-kategori="${escapeHTML(product.kategori || '')}" data-status="${product.status || 'Baru'}">
-              ${product.status && product.status !== 'Baru' ? `<span class="badge ${badgeClass}">${badgeEmoji} ${badgeLabel}</span>` : ''}
+            <div class="product-card" data-product-id="${product.id}" data-kategori="${escapeHTML(product.kategori || '')}">
+              ${badgesHTML}
               <div class="img-slider" data-slider-id="${product.id}">
                 ${sliderHTML}
               </div>
@@ -1564,16 +1766,16 @@
             // ==================== RENDER ALL ====================
             function getFilteredProducts() {
                 let filtered = [...allProducts];
-                // Filter kategori
                 if (currentFilter === '🔥 Terlaris') {
-                    filtered = filtered.filter(p => p.status === 'Terlaris');
+                    const topIds = getTopTerlarisIds(5);
+                    filtered = filtered.filter(p => topIds.includes(p.id));
                 } else if (currentFilter === '⭐ Terbaik') {
-                    filtered = filtered.filter(p => p.status === 'Terbaik');
+                    const topIds = getTopTerbaikIds(5);
+                    filtered = filtered.filter(p => topIds.includes(p.id));
                 } else if (currentFilter !== 'semua') {
                     filtered = filtered.filter(p => p.kategori && p.kategori.toLowerCase() === currentFilter
                         .toLowerCase());
                 }
-                // Search
                 if (searchQuery.trim()) {
                     const q = searchQuery.trim().toLowerCase();
                     filtered = filtered.filter(p =>
@@ -1587,7 +1789,6 @@
 
             function renderAll() {
                 const filtered = getFilteredProducts();
-                // Grid
                 if (filtered.length === 0) {
                     $productGrid.innerHTML = '';
                     $emptyState.style.display = 'block';
@@ -1596,46 +1797,28 @@
                     $productGrid.innerHTML = filtered.map(p => createProductCard(p)).join('');
                 }
                 // Slider Terlaris
-                const terlaris = [...allProducts]
-                    .filter(p => getProductPurchaseCount(p.id) > 0)
-                    .sort((a, b) => getProductPurchaseCount(b.id) - getProductPurchaseCount(a.id))
-                    .slice(0, 15);
-                if (terlaris.length === 0 && allProducts.length > 0) {
-                    // Fallback: tampilkan produk dengan status Terlaris
-                    const fallbackTerlaris = allProducts.filter(p => p.status === 'Terlaris').slice(0, 10);
-                    $sliderTerlaris.innerHTML = fallbackTerlaris.length > 0 ?
-                        fallbackTerlaris.map(p => createProductCard(p)).join('') :
-                        '<p style="color:var(--text3);padding:20px;">Belum ada produk terlaris</p>';
-                } else if (terlaris.length > 0) {
-                    $sliderTerlaris.innerHTML = terlaris.map(p => createProductCard(p)).join('');
+                const topTerlarisIds = getTopTerlarisIds(10);
+                const terlarisProducts = allProducts.filter(p => topTerlarisIds.includes(p.id));
+                if (terlarisProducts.length > 0) {
+                    $sliderTerlaris.innerHTML = terlarisProducts.map(p => createProductCard(p)).join('');
                 } else {
                     $sliderTerlaris.innerHTML =
                         '<p style="color:var(--text3);padding:20px;">Belum ada produk terlaris</p>';
                 }
                 // Slider Terbaik
-                const terbaik = [...allProducts]
-                    .map(p => {
-                        const r = getProductRating(p.id);
-                        const pc = getProductPurchaseCount(p.id);
-                        const score = r.avg + pc + r.count;
-                        return { product: p, score };
-                    })
-                    .sort((a, b) => b.score - a.score)
-                    .slice(0, 15);
-                if (terbaik.length > 0) {
-                    $sliderTerbaik.innerHTML = terbaik.map(t => createProductCard(t.product)).join('');
+                const topTerbaikIds = getTopTerbaikIds(10);
+                const terbaikProducts = allProducts.filter(p => topTerbaikIds.includes(p.id));
+                if (terbaikProducts.length > 0) {
+                    $sliderTerbaik.innerHTML = terbaikProducts.map(p => createProductCard(p)).join('');
                 } else {
                     $sliderTerbaik.innerHTML =
                         '<p style="color:var(--text3);padding:20px;">Belum ada produk terbaik</p>';
                 }
-                // Attach event listeners ke semua card
                 attachCardEvents();
-                // Render kategori
                 renderCategoryButtons();
             }
 
             function attachCardEvents() {
-                // Slider dalam card
                 document.querySelectorAll('.img-slider[data-slider-id]').forEach(slider => {
                     const productId = slider.getAttribute('data-slider-id');
                     const product = allProducts.find(p => p.id === productId);
@@ -1650,40 +1833,32 @@
                     function updateSlider(idx) {
                         currentIdx = idx;
                         if (img) img.src = fotos[idx];
-                        if (dots) {
-                            dots.forEach((d, i) => d.classList.toggle('active', i === idx));
-                        }
+                        if (dots) dots.forEach((d, i) => d.classList.toggle('active', i === idx));
                     }
                     if (prevBtn) prevBtn.addEventListener('click', (e) => {
                         e.stopPropagation();
-                        const newIdx = (currentIdx - 1 + fotos.length) % fotos.length;
-                        updateSlider(newIdx);
+                        updateSlider((currentIdx - 1 + fotos.length) % fotos.length);
                     });
                     if (nextBtn) nextBtn.addEventListener('click', (e) => {
                         e.stopPropagation();
-                        const newIdx = (currentIdx + 1) % fotos.length;
-                        updateSlider(newIdx);
+                        updateSlider((currentIdx + 1) % fotos.length);
                     });
                     if (dots) {
                         dots.forEach(dot => {
                             dot.addEventListener('click', (e) => {
                                 e.stopPropagation();
-                                const idx = parseInt(dot.getAttribute('data-dot'));
-                                updateSlider(idx);
+                                updateSlider(parseInt(dot.getAttribute('data-dot')));
                             });
                         });
                     }
                 });
 
-                // Tombol di card
                 document.querySelectorAll('.product-card').forEach(card => {
                     const pid = card.getAttribute('data-product-id');
                     card.querySelector('[data-action="detail"]')?.addEventListener('click', () =>
                         openDetailModal(pid));
-                    card.querySelector('[data-action="beli"]')?.addEventListener('click', () =>
-                    handleBeli(pid));
-                    card.querySelector('[data-action="hapus"]')?.addEventListener('click', () =>
-                        handleHapus(pid));
+                    card.querySelector('[data-action="beli"]')?.addEventListener('click', () => handleBeli(pid));
+                    card.querySelector('[data-action="hapus"]')?.addEventListener('click', () => handleHapus(pid));
                 });
             }
 
@@ -1696,11 +1871,12 @@
                 const avgRating = rating.count > 0 ? rating.avg.toFixed(1) : '0.0';
                 const fotos = product.foto || [];
                 const isOwner = product.owner === DEVICE_ID;
+                const badges = getProductBadges(product);
+                const badgesText = badges.map(b => b.label).join(' ');
 
                 let sliderHTML = '';
                 if (fotos.length === 0) {
-                    sliderHTML =
-                        `<img src="logo.png" alt="No image" style="object-fit:contain;background:#0d0d16;width:100%;height:100%;" onerror="this.style.background='#1c1c28';this.style.borderRadius='8px';">`;
+                    sliderHTML = `<img src="logo.png" style="object-fit:contain;background:#0d0d16;width:100%;height:100%;">`;
                 } else if (fotos.length === 1) {
                     sliderHTML =
                         `<img src="${fotos[0]}" alt="${escapeHTML(product.nama)}" style="object-fit:contain;background:#0d0d16;width:100%;height:100%;">`;
@@ -1719,7 +1895,7 @@
             <button class="close-modal" id="closeDetailModal">&times;</button>
             <div class="detail-img-slider" id="detailSlider">${sliderHTML}</div>
             ${dotsHTML}
-            <h3>${escapeHTML(product.nama)}</h3>
+            <h3>${escapeHTML(product.nama)} ${badgesText ? `<small style="font-size:0.8rem;">${badgesText}</small>` : ''}</h3>
             <div class="detail-price">${escapeHTML(product.harga || 'Gratis')}</div>
             <div class="detail-meta">
               <span>🏷️ ${escapeHTML(product.kategori || '-')}</span>
@@ -1735,7 +1911,6 @@
             </div>`;
                 $modalDetail.classList.add('active');
 
-                // Slider di detail
                 if (fotos.length > 1) {
                     let detailIdx = 0;
                     const detailImg = document.getElementById('detailMainImg');
@@ -1747,38 +1922,27 @@
                         if (detailImg) detailImg.src = fotos[idx];
                         if (allDots) allDots.forEach((d, i) => d.classList.toggle('active', i === idx));
                     }
-                    document.getElementById('detailPrev')?.addEventListener('click', () => {
-                        const newIdx = (detailIdx - 1 + fotos.length) % fotos.length;
-                        updateDetailSlider(newIdx);
-                    });
-                    document.getElementById('detailNext')?.addEventListener('click', () => {
-                        const newIdx = (detailIdx + 1) % fotos.length;
-                        updateDetailSlider(newIdx);
-                    });
+                    document.getElementById('detailPrev')?.addEventListener('click', () => updateDetailSlider((
+                        detailIdx - 1 + fotos.length) % fotos.length));
+                    document.getElementById('detailNext')?.addEventListener('click', () => updateDetailSlider((
+                        detailIdx + 1) % fotos.length));
                     if (allDots) {
-                        allDots.forEach(dot => {
-                            dot.addEventListener('click', () => {
-                                const idx = parseInt(dot.getAttribute('data-dot'));
-                                updateDetailSlider(idx);
-                            });
-                        });
+                        allDots.forEach(dot => dot.addEventListener('click', () => updateDetailSlider(parseInt(dot
+                            .getAttribute('data-dot')))));
                     }
                 }
 
-                document.getElementById('closeDetailModal')?.addEventListener('click', () => {
-                    $modalDetail.classList.remove('active');
-                });
-                document.getElementById('detailBeliBtn')?.addEventListener('click', () => handleBeli(product
-                    .id));
+                document.getElementById('closeDetailModal')?.addEventListener('click', () => $modalDetail.classList
+                    .remove('active'));
+                document.getElementById('detailBeliBtn')?.addEventListener('click', () => handleBeli(product.id));
                 document.getElementById('detailRatingBtn')?.addEventListener('click', () => openRatingModal(product
-                    .id));
+                .id));
                 document.getElementById('detailHapusBtn')?.addEventListener('click', () => {
                     handleHapus(product.id);
                     $modalDetail.classList.remove('active');
                 });
             }
 
-            // Close modal detail on overlay click
             $modalDetail.addEventListener('click', function(e) {
                 if (e.target === $modalDetail) $modalDetail.classList.remove('active');
             });
@@ -1787,7 +1951,6 @@
             function openRatingModal(productId) {
                 const product = allProducts.find(p => p.id === productId);
                 if (!product) return;
-                // Cek apakah device sudah memberi rating
                 const existing = allRatings[productId] || {};
                 if (existing[DEVICE_ID]) {
                     showToast('Anda sudah memberi rating pada produk ini.', 'info');
@@ -1798,7 +1961,6 @@
                 $ratingProductName.textContent = product.nama;
                 $ratingHint.textContent = 'Klik bintang untuk memberi rating';
                 $btnSubmitRating.style.display = 'inline-block';
-                // Reset stars
                 $ratingStars.querySelectorAll('.star').forEach(s => s.classList.remove('hover', 'selected'));
                 $modalRating.classList.add('active');
             }
@@ -1807,9 +1969,7 @@
                 const star = e.target.closest('.star');
                 if (!star || currentRatingProductId === null) return;
                 const val = parseInt(star.getAttribute('data-val'));
-                $ratingStars.querySelectorAll('.star').forEach((s, i) => {
-                    s.classList.toggle('hover', i < val);
-                });
+                $ratingStars.querySelectorAll('.star').forEach((s, i) => s.classList.toggle('hover', i < val));
             });
             $ratingStars.addEventListener('mouseleave', function() {
                 if (currentRatingProductId === null) return;
@@ -1841,11 +2001,6 @@
                 currentRatingProductId = null;
                 currentRatingValue = 0;
                 renderAll();
-                // Update modal detail jika terbuka
-                if ($modalDetail.classList.contains('active')) {
-                    const pid = $modalDetailContent.querySelector('#detailRatingBtn')?.getAttribute(
-                        'data-pid');
-                }
             });
             document.getElementById('closeModalRating')?.addEventListener('click', () => {
                 $modalRating.classList.remove('active');
@@ -1865,44 +2020,28 @@
                 const product = allProducts.find(p => p.id === productId);
                 if (!product) return;
                 let kontak = product.kontakPenjual || '';
-                if (!kontak) {
-                    showToast('Kontak penjual tidak tersedia.', 'error');
+                if (!kontak.startsWith('https://')) {
+                    showToast('Kontak penjual tidak valid.', 'error');
                     return;
                 }
-                // Ubah @username ke link telegram
                 let link = kontak.trim();
-                if (link.startsWith('@')) {
-                    link = 'https://t.me/' + link.substring(1);
-                }
-                // Jika bukan URL, coba deteksi WhatsApp
-                if (!link.startsWith('http')) {
-                    // Anggap WhatsApp
-                    const cleaned = link.replace(/\D/g, '');
-                    link = 'https://wa.me/' + cleaned;
-                }
-                const pesan = `Halo, saya ingin membeli ${product.nama}\nKategori: ${product.kategori || '-'}\nHarga: ${product.harga || 'Gratis'}\nApakah produk masih tersedia?`;
+                const pesan =
+                    `Halo, saya ingin membeli ${product.nama}\nKategori: ${product.kategori || '-'}\nHarga: ${product.harga || 'Gratis'}\nApakah produk masih tersedia?`;
                 const encodedPesan = encodeURIComponent(pesan);
                 let finalLink = link;
                 if (link.includes('t.me') || link.includes('telegram')) {
                     finalLink = link + (link.includes('?') ? '&' : '?') + 'text=' + encodedPesan;
                 } else if (link.includes('wa.me')) {
                     finalLink = link + (link.includes('?') ? '&' : '?') + 'text=' + encodedPesan;
-                } else {
-                    finalLink = link;
                 }
-                // Buka link
                 window.open(finalLink, '_blank', 'noopener');
-                // Tambah jumlah pembelian
                 if (!allPurchases[productId]) allPurchases[productId] = 0;
                 allPurchases[productId]++;
                 savePurchases(allPurchases);
                 showToast('Pembelian berhasil! Jumlah pembelian +1 🎉', 'success');
-                // Update tampilan
                 setTimeout(() => {
                     renderAll();
-                    if ($modalDetail.classList.contains('active')) {
-                        openDetailModal(productId);
-                    }
+                    if ($modalDetail.classList.contains('active')) openDetailModal(productId);
                 }, 500);
             }
 
@@ -1917,7 +2056,6 @@
                 if (confirm('Yakin ingin menghapus produk "' + product.nama + '"?')) {
                     allProducts = allProducts.filter(p => p.id !== productId);
                     saveProducts(allProducts);
-                    // Hapus rating & purchases terkait
                     if (allRatings[productId]) delete allRatings[productId];
                     saveRatings(allRatings);
                     if (allPurchases[productId]) delete allPurchases[productId];
@@ -1931,42 +2069,44 @@
             // ==================== TAMBAH PRODUK ====================
             $inputFoto.addEventListener('change', function() {
                 const files = Array.from(this.files);
-                if (files.length > 6) {
-                    showToast('Maksimal 6 foto.', 'error');
+                if (files.length > 2) {
+                    showToast('Maksimal 2 foto.', 'error');
                     this.value = '';
                     uploadedFiles = [];
-                    $fileInfo.textContent = '0/6 foto dipilih';
+                    $fileInfo.textContent = '0/2 foto dipilih';
                     return;
                 }
                 uploadedFiles = files;
-                $fileInfo.textContent = files.length + '/6 foto dipilih';
+                $fileInfo.textContent = files.length + '/2 foto dipilih';
             });
 
             document.getElementById('btnTambahProduk').addEventListener('click', () => {
                 $formTambahProduk.reset();
                 uploadedFiles = [];
-                $fileInfo.textContent = '0/6 foto dipilih';
+                $fileInfo.textContent = '0/2 foto dipilih';
                 $errNama.style.display = 'none';
                 $errKategori.style.display = 'none';
+                $errKontak.style.display = 'none';
                 $modalTambah.classList.add('active');
             });
-            document.getElementById('closeModalTambah').addEventListener('click', () => {
-                $modalTambah.classList.remove('active');
-            });
+            document.getElementById('closeModalTambah').addEventListener('click', () => $modalTambah.classList.remove(
+                'active'));
             $modalTambah.addEventListener('click', function(e) {
                 if (e.target === $modalTambah) $modalTambah.classList.remove('active');
             });
 
-            // Validasi realtime
             $inputNama.addEventListener('input', validateForm);
             $inputKategori.addEventListener('input', validateForm);
+            $inputKontak.addEventListener('input', validateForm);
 
             function validateForm() {
                 const nama = $inputNama.value.trim();
                 const kategori = $inputKategori.value.trim();
+                const kontak = $inputKontak.value.trim();
                 let valid = true;
                 $errNama.style.display = 'none';
                 $errKategori.style.display = 'none';
+                $errKontak.style.display = 'none';
 
                 if (nama && kategori) {
                     if (!nama.toLowerCase().startsWith(kategori.toLowerCase())) {
@@ -1975,15 +2115,10 @@
                         valid = false;
                     }
                 }
-                if (nama && kategori && nama.toLowerCase().startsWith(kategori.toLowerCase())) {
-                    // Cek kecocokan lebih lanjut
-                    const expectedStart = kategori.toLowerCase();
-                    const actualStart = nama.toLowerCase().substring(0, expectedStart.length);
-                    if (actualStart !== expectedStart) {
-                        $errKategori.textContent = 'Kategori produk tidak cocok';
-                        $errKategori.style.display = 'block';
-                        valid = false;
-                    }
+                if (kontak && !kontak.startsWith('https://')) {
+                    $errKontak.textContent = 'Kontak wajib diawali https://';
+                    $errKontak.style.display = 'block';
+                    valid = false;
                 }
                 return valid;
             }
@@ -1995,9 +2130,7 @@
                 const harga = $inputHarga.value.trim();
                 const kategori = $inputKategori.value.trim();
                 const kontak = $inputKontak.value.trim();
-                const status = $inputStatus.value;
 
-                // Validasi
                 if (!nama || !kategori || !kontak) {
                     showToast('Nama, Kategori, dan Kontak wajib diisi.', 'error');
                     return;
@@ -2005,15 +2138,18 @@
                 if (!nama.toLowerCase().startsWith(kategori.toLowerCase())) {
                     $errNama.textContent = 'Nama produk wajib diawali kategori';
                     $errNama.style.display = 'block';
-                    showToast('Nama produk wajib diawali kategori.', 'error');
                     return;
                 }
-                if (uploadedFiles.length > 6) {
-                    showToast('Maksimal 6 foto.', 'error');
+                if (!kontak.startsWith('https://')) {
+                    $errKontak.textContent = 'Kontak wajib diawali https://';
+                    $errKontak.style.display = 'block';
+                    return;
+                }
+                if (uploadedFiles.length > 2) {
+                    showToast('Maksimal 2 foto.', 'error');
                     return;
                 }
 
-                // Proses foto menjadi base64 (kompres dengan canvas)
                 const fotoBase64 = [];
                 if (uploadedFiles.length > 0) {
                     for (const file of uploadedFiles) {
@@ -2027,9 +2163,8 @@
                     }
                 }
 
-                // Simpan kategori custom jika baru
-                if (kategori && !['🔥 Terlaris', '⭐ Terbaik'].includes(kategori) && !customCategories
-                    .includes(kategori)) {
+                if (kategori && !['🔥 Terlaris', '⭐ Terbaik'].includes(kategori) && !customCategories.includes(
+                        kategori)) {
                     customCategories.push(kategori);
                     saveCustomCategories(customCategories);
                 }
@@ -2042,7 +2177,6 @@
                     harga: harga || 'Gratis',
                     kategori: kategori,
                     kontakPenjual: kontak,
-                    status: status,
                     foto: fotoBase64,
                     createdAt: new Date().toISOString(),
                 };
@@ -2053,21 +2187,21 @@
                 $modalTambah.classList.remove('active');
                 $formTambahProduk.reset();
                 uploadedFiles = [];
-                $fileInfo.textContent = '0/6 foto dipilih';
+                $fileInfo.textContent = '0/2 foto dipilih';
                 $errNama.style.display = 'none';
                 $errKategori.style.display = 'none';
+                $errKontak.style.display = 'none';
                 renderAll();
             });
 
-            // Resize image dengan canvas
             function resizeImage(file, maxSize) {
                 return new Promise((resolve, reject) => {
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         const img = new Image();
                         img.onload = function() {
-                            let w = img.width;
-                            let h = img.height;
+                            let w = img.width,
+                                h = img.height;
                             if (w > maxSize || h > maxSize) {
                                 const ratio = Math.min(maxSize / w, maxSize / h);
                                 w = Math.round(w * ratio);
@@ -2101,9 +2235,8 @@
             <h3 style="margin-bottom:12px;">${title}</h3>
             <div style="color:var(--text2);line-height:1.7;font-size:0.9rem;">${content}</div>`;
                 $modalInfo.classList.add('active');
-                document.getElementById('closeInfoModal')?.addEventListener('click', () => {
-                    $modalInfo.classList.remove('active');
-                });
+                document.getElementById('closeInfoModal')?.addEventListener('click', () => $modalInfo.classList.remove(
+                    'active'));
             }
             $modalInfo.addEventListener('click', function(e) {
                 if (e.target === $modalInfo) $modalInfo.classList.remove('active');
@@ -2111,24 +2244,22 @@
 
             document.getElementById('btnTentang').addEventListener('click', () => {
                 openInfoModal('📖 Tentang COMOT STORE',
-                    '<p><strong>COMOT STORE</strong> adalah marketplace produk digital premium yang mempertemukan kreator dan pembeli. Semua data disimpan secara lokal di perangkat pengguna melalui localStorage. Tidak ada data yang dikirim ke server eksternal.</p><p style="margin-top:8px;">semoga website ini dapat bermanfaat bagi kalian..</p>'
+                    '<p><strong>COMOT STORE</strong> adalah marketplace produk digital premium. Semua data disimpan secara lokal di perangkat pengguna melalui localStorage. Tidak ada data yang dikirim ke server eksternal.</p>'
                     );
             });
             document.getElementById('btnPrivasi').addEventListener('click', () => {
                 openInfoModal('🔒 Kebijakan Privasi',
-                    '<p>📌 Data disimpan di localStorage perangkat pengguna.</p><p>📌 Data tidak dijual atau dibagikan ke pihak mana pun.</p><p>📌 Pengguna memiliki kendali penuh atas data mereka. Menghapus cache browser akan menghapus semua data.</p>'
-                    );
+                    '<p>📌 Data disimpan di localStorage perangkat pengguna.</p><p>📌 Data tidak dijual atau dibagikan.</p>');
             });
             document.getElementById('btnSyarat').addEventListener('click', () => {
                 openInfoModal('📜 Syarat & Ketentuan',
-                    '<p>🚫 Dilarang spam.</p><p>🚫 Dilarang upload konten ilegal.</p><p>⚠️ Pemilik produk bertanggung jawab penuh atas konten yang diupload.</p><p>✅ Produk wajib sesuai deskripsi.</p><p>✅ Gunakan kontak penjual untuk transaksi. COMOT STORE hanya sebagai platform perantara.</p>'
+                    '<p>🚫 Dilarang spam/ilegal.</p><p>⚠️ Pemilik bertanggung jawab penuh.</p><p>✅ Produk wajib sesuai deskripsi.</p>'
                     );
             });
 
             // ==================== INITIAL RENDER ====================
             renderAll();
 
-            // ==================== KEYBOARD SHORTCUT ====================
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
                     $modalTambah.classList.remove('active');
@@ -2143,8 +2274,6 @@
             console.log('🚀 COMOT STORE siap!');
             console.log('📱 Device ID:', DEVICE_ID);
             console.log('📦 Total produk:', allProducts.length);
-            console.log('⭐ Total rating entries:', Object.keys(allRatings).length);
-            console.log('💾 Semua data disimpan di localStorage.');
         })();
     </script>
 </body>
