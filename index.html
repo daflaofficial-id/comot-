@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COMOT STORE - Marketplace Produk Digital Premium</title>
+
+<!-- Favicon -->
+<link rel="icon" href="logo.png">
+
+<style>
+/* =========================
+   COMOT STORE
+   Single File Website
+========================= */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+scroll-behavior:smooth;
+}
+
+body{
+background:#050816;
+color:white;
+overflow-x:hidden;
+}
+
+/* loading */
+
+#loading{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#050816;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+z-index:999999;
+}
+
+#loading img{
+width:120px;
+height:120px;
+border-radius:50%;
+box-shadow:
+0 0 20px #00aaff,
+0 0 50px #0088ff;
+animation:spin 2s linear infinite;
+}
+
+.loadingText{
+margin-top:20px;
+color:#66cfff;
+}
+
+@keyframes spin{
+100%{
+transform:rotate(360deg);
+}
+}
+
+
+/* navbar */
+
+nav{
+position:sticky;
+top:0;
+backdrop-filter:blur(12px);
+background:rgba(255,255,255,.05);
+padding:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+z-index:999;
+border-bottom:1px solid rgba(255,255,255,.1);
+}
+
+.logoArea{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.logoArea img{
+width:55px;
+height:55px;
+border-radius:50%;
+box-shadow:0 0 20px #009dff;
+transition:.5s;
+}
+
+.logoArea img:hover{
+transform:scale(1.1);
+}
+
+.brand{
+font-size:22px;
+font-weight:bold;
+background:linear-gradient(to right,#00bfff,#4dc3ff);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+.menu{
+display:flex;
+gap:20px;
+}
+
+.menu a{
+color:white;
+text-decoration:none;
+opacity:.8;
+}
+
+.menu a:hover{
+color:#42bfff;
+}
+
+
+/* banner */
+
+.hero{
+padding:80px 20px;
+text-align:center;
+}
+
+.hero img{
+width:140px;
+height:140px;
+border-radius:50%;
+box-shadow:0 0 30px #00aaff;
+margin-bottom:20px;
+}
+
+.hero h1{
+font-size:35px;
+margin-bottom:10px;
+}
+
+.hero p{
+opacity:.7;
+margin-bottom:25px;
+}
+
+.btn{
+padding:13px 25px;
+border:none;
+border-radius:30px;
+cursor:pointer;
+background:linear-gradient(90deg,#0088ff,#00d5ff);
+color:white;
+font-weight:bold;
+}
+
+.btn:hover{
+transform:scale(1.05);
+}
+
+
+/* search */
+
+.searchBox{
+padding:20px;
+text-align:center;
+}
+
+.searchBox input{
+width:90%;
+max-width:600px;
+padding:15px;
+border:none;
+border-radius:50px;
+background:#10182c;
+color:white;
+}
+
+
+/* kategori */
+
+#kategoriContainer{
+display:flex;
+gap:10px;
+overflow:auto;
+padding:15px;
+}
+
+.kategoriBtn{
+padding:10px 18px;
+border-radius:30px;
+border:none;
+background:#111d36;
+color:white;
+cursor:pointer;
+}
+
+.kategoriBtn:hover{
+background:#0099ff;
+}
+
+
+/* produk */
+
+.productGrid{
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(260px,1fr));
+
+gap:25px;
+padding:25px;
+}
+
+.card{
+background:rgba(255,255,255,.05);
+
+backdrop-filter:blur(10px);
+
+border-radius:25px;
+
+padding:15px;
+
+box-shadow:
+0 0 20px rgba(0,153,255,.2);
+
+transition:.5s;
+}
+
+.card:hover{
+transform:translateY(-10px);
+}
+
+.card img{
+width:100%;
+height:220px;
+object-fit:cover;
+border-radius:20px;
+}
+
+.card h3{
+margin-top:10px;
+}
+
+.price{
+color:#3ebcff;
+font-size:20px;
+font-weight:bold;
+margin:10px 0;
+}
+
+.badge{
+background:#ff5e00;
+padding:6px 12px;
+border-radius:20px;
+display:inline-block;
+margin-bottom:10px;
+}
+
+.empty{
+text-align:center;
+padding:60px;
+opacity:.6;
+}
+
+
+/* modal */
+
+.modal{
+display:none;
+position:fixed;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.8);
+top:0;
+left:0;
+z-index:9999;
+justify-content:center;
+align-items:center;
+}
+
+.modalContent{
+background:#091221;
+padding:25px;
+width:95%;
+max-width:600px;
+border-radius:30px;
+max-height:90vh;
+overflow:auto;
+}
+
+input,textarea,select{
+width:100%;
+padding:14px;
+margin:8px 0;
+background:#10182c;
+border:none;
+border-radius:12px;
+color:white;
+}
+
+.close{
+float:right;
+cursor:pointer;
+font-size:25px;
+}
+
+footer{
+text-align:center;
+padding:50px;
+}
+
+.support{
+background:#00a2ff;
+padding:12px 25px;
+display:inline-block;
+border-radius:30px;
+text-decoration:none;
+color:white;
+margin-top:20px;
+}
+</style>
+</head>
+<body>
+
+
+<div id="loading">
+<img src="logo.png">
+<div class="loadingText">
+COMOT STORE
+</div>
+</div>
+
+
+
+<nav>
+
+<div class="logoArea">
+
+<img src="logo.png">
+
+<div class="brand">
+COMOT STORE
+</div>
+
+</div>
+
+<div class="menu">
+<a href="#">Home</a>
+<a href="#">Produk</a>
+<a href="#">Kategori</a>
+<a href="#">Terlaris</a>
+<a href="#">Support</a>
+<a href="#">Kontak</a>
+</div>
+
+</nav>
+
+
+
+<section class="hero">
+
+<img src="logo.png">
+
+<h1>
+Temukan Produk Digital Premium
+</h1>
+
+<p>
+Poster, Script, Ebook dan lainnya
+</p>
+
+<button class="btn"
+onclick="openModal()">
+
+Tambah Produk
+
+</button>
+
+</section>
+
+
+
+<div class="searchBox">
+
+<input
+id="search"
+placeholder="Cari produk...">
+
+</div>
+
+
+<div id="kategoriContainer">
+
+<button
+class="kategoriBtn">
+Semua
+</button>
+
+<button
+class="kategoriBtn">
+Poster
+</button>
+
+<button
+class="kategoriBtn">
+Script
+</button>
+
+<button
+class="kategoriBtn">
+Ebook
+</button>
+
+<button
+class="kategoriBtn">
+Lainnya
+</button>
+
+</div>
+
+
+
+<div
+class="productGrid"
+id="produk">
+
+<div class="empty">
+Belum ada produk
+</div>
+
+</div>
+
+
+
+<div class="modal" id="modal">
+
+<div class="modalContent">
+
+<div
+class="close"
+onclick="closeModal()">
+✕
+</div>
+
+<h2>Tambah Produk</h2>
+
+<input
+type="file"
+id="foto"
+multiple
+accept="image/*">
+
+<input
+id="nama"
+placeholder="Nama produk">
+
+<textarea
+id="deskripsi"
+placeholder="Deskripsi">
+</textarea>
+
+<input
+id="harga"
+placeholder="Harga">
+
+<input
+id="kategori"
+placeholder="Kategori">
+
+<input
+id="kontak"
+placeholder="Kontak Penjual">
+
+<select id="status">
+<option>Produk Baru</option>
+<option>Terlaris</option>
+<option>Terbaik</option>
+</select>
+
+<button
+class="btn"
+onclick="tambahProduk()">
+
+Posting Produk
+
+</button>
+
+</div>
+
+</div>
+
+
+
+<footer>
+
+<h2>Support</h2>
+
+<a
+class="support"
+href="https://saweria.co/Maxc88">
+
+Dukung Creator
+
+</a>
+
+<br><br>
+
+<a
+class="support"
+href="https://t.me/Bababaaba07">
+
+Kontak Telegram
+
+</a>
+
+</footer>
+
+
+
+<script>
+
+/*
+
+Contoh data:
+
+[
+{
+nama:"Poster FF",
+harga:"5000",
+kategori:"Poster",
+foto:[],
+rating:5
+}
+]
+
+*/
+
+setTimeout(()=>{
+
+loading.style.display="none"
+
+},2000)
+
+
+
+function openModal(){
+
+modal.style.display="flex"
+
+}
+
+function closeModal(){
+
+modal.style.display="none"
+
+}
+
+
+
+let data=
+JSON.parse(
+localStorage.getItem(
+"produkComot"
+)
+)||[]
+
+
+
+function tampilkan(){
+
+let box=
+document.getElementById(
+"produk"
+)
+
+box.innerHTML=""
+
+if(data.length==0){
+
+box.innerHTML=
+`<div class='empty'>
+Belum ada produk
+</div>`
+
+return
+
+}
+
+
+
+data.forEach((x,i)=>{
+
+box.innerHTML+=`
+
+<div class='card'>
+
+${x.status=="Terlaris"
+?'<div class="badge">🔥 Produk Terlaris</div>'
+:""}
+
+<img src="${
+x.foto[0]
+||'logo.png'
+}">
+
+<h3>${x.nama}</h3>
+
+<div class="price">
+
+Rp ${x.harga}
+
+</div>
+
+<div>
+★★★★★
+(${x.rating||0})
+</div>
+
+<button
+class="btn"
+
+onclick="beli('${x.nama}','${x.harga}')">
+
+Beli
+
+</button>
+
+</div>
+
+`
+
+})
+
+}
+
+tampilkan()
+
+
+function tambahProduk(){
+
+let file=
+document
+.getElementById(
+"foto"
+).files
+
+
+if(file.length>6){
+
+alert(
+"maksimal 6 foto"
+)
+
+return
+
+}
+
+
+let arr=[]
+
+for(let i=0;i<
+file.length;i++){
+
+let reader=
+new FileReader()
+
+reader.onload=
+e=>{
+
+arr.push(
+e.target.result
+)
+
+if(
+arr.length==
+file.length
+){
+
+simpan(arr)
+
+}
+
+}
+
+reader.readAsDataURL(
+file[i]
+)
+
+}
+
+if(file.length==0){
+
+simpan([])
+
+}
+
+}
+
+
+
+function simpan(foto){
+
+data.push({
+
+nama:nama.value,
+
+deskripsi:
+deskripsi.value,
+
+harga:harga.value,
+
+kategori:
+kategori.value,
+
+kontak:
+kontak.value,
+
+status:
+status.value,
+
+foto:foto,
+
+rating:0
+
+})
+
+localStorage.setItem(
+"produkComot",
+JSON.stringify(data)
+)
+
+closeModal()
+
+tampilkan()
+
+}
+
+
+
+function beli(
+nama,
+harga
+){
+
+let text=
+
+`Halo, saya ingin membeli ${nama}
+
+Harga:${harga}
+
+Apakah produk masih tersedia?`
+
+window.open(
+
+"https://t.me/Bababaaba07?text="+
+
+encodeURIComponent(text)
+
+)
+
+}
+
+
+search.oninput=()=>{
+
+let keyword=
+search.value
+.toLowerCase()
+
+document
+.querySelectorAll(
+".card"
+)
+
+.forEach(x=>{
+
+x.style.display=
+
+x.innerText
+.toLowerCase()
+.includes(keyword)
+
+?
+
+"block"
+
+:
+
+"none"
+
+})
+
+}
+
+</script>
+
+</body>
+</html>
