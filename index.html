@@ -1,802 +1,2151 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>COMOT STORE - Marketplace Produk Digital Premium</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COMOT STORE - Marketplace Produk Digital Premium</title>
+    <link rel="icon" href="logo.png" type="image/png">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #111118;
+            --surface2: #16161f;
+            --surface3: #1c1c28;
+            --text: #e8e8f0;
+            --text2: #b0b0c0;
+            --text3: #8888a0;
+            --accent: #3b82f6;
+            --accent2: #1d4ed8;
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            --accent-glow2: rgba(59, 130, 246, 0.25);
+            --radius-sm: 10px;
+            --radius: 16px;
+            --radius-lg: 20px;
+            --radius-xl: 24px;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 40px rgba(59, 130, 246, 0.3);
+            --glass-bg: rgba(20, 20, 30, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-<!-- Favicon -->
-<link rel="icon" href="logo.png">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+            background-image:
+                radial-gradient(ellipse at 20% 20%, rgba(59, 130, 246, 0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 60%, rgba(59, 130, 246, 0.04) 0%, transparent 60%),
+                radial-gradient(ellipse at 50% 90%, rgba(30, 60, 120, 0.08) 0%, transparent 50%);
+        }
 
-<style>
-/* =========================
-   COMOT STORE
-   Single File Website
-========================= */
+        /* ==================== LOADING SCREEN ==================== */
+        #loadingScreen {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: #0a0a12;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+            opacity: 1;
+            visibility: visible;
+        }
+        #loadingScreen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        #loadingScreen .loader-ring {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #loadingScreen .loader-ring::before {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top-color: var(--accent);
+            border-right-color: var(--accent);
+            animation: spinLoader 0.8s linear infinite;
+            filter: drop-shadow(0 0 12px var(--accent-glow));
+        }
+        #loadingScreen .loader-ring img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            animation: pulseLogo 1.4s ease-in-out infinite;
+            object-fit: contain;
+            z-index: 1;
+            box-shadow: 0 0 30px var(--accent-glow), 0 0 60px var(--accent-glow2);
+        }
+        #loadingScreen .loading-text {
+            margin-top: 20px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: var(--text);
+            animation: fadeText 1.5s ease-in-out infinite;
+            text-shadow: 0 0 20px var(--accent-glow);
+        }
+        @keyframes spinLoader {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        @keyframes pulseLogo {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.08);
+            }
+        }
+        @keyframes fadeText {
+            0%,
+            100% {
+                opacity: 0.7;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-scroll-behavior:smooth;
-}
+        /* ==================== NAVBAR ==================== */
+        #navbar {
+            position: sticky;
+            top: 12px;
+            z-index: 1000;
+            margin: 8px auto 0;
+            max-width: 1100px;
+            width: calc(100% - 24px);
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+            transition: var(--transition);
+        }
+        #navbar .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text);
+            flex-shrink: 0;
+        }
+        #navbar .nav-brand img {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: contain;
+            box-shadow: 0 0 18px var(--accent-glow), 0 0 36px var(--accent-glow2);
+            transition: var(--transition);
+        }
+        #navbar .nav-brand:hover img {
+            box-shadow: 0 0 28px var(--accent-glow), 0 0 50px var(--accent-glow2);
+            transform: scale(1.06);
+        }
+        #navbar .nav-brand .brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+        #navbar .nav-brand .brand-name {
+            font-weight: 700;
+            font-size: 1.15rem;
+            letter-spacing: 1px;
+            color: #fff;
+        }
+        #navbar .nav-brand .brand-tagline {
+            font-size: 0.7rem;
+            color: var(--text3);
+            letter-spacing: 0.5px;
+        }
+        #navbar .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+        #navbar .nav-links a {
+            text-decoration: none;
+            color: var(--text2);
+            font-weight: 500;
+            font-size: 0.9rem;
+            padding: 8px 16px;
+            border-radius: 50px;
+            transition: var(--transition);
+            position: relative;
+            white-space: nowrap;
+            letter-spacing: 0.4px;
+        }
+        #navbar .nav-links a:hover {
+            color: #fff;
+            background: rgba(59, 130, 246, 0.12);
+            box-shadow: 0 0 20px var(--accent-glow2);
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+        #navbar .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 5px;
+            padding: 8px;
+            z-index: 1001;
+        }
+        #navbar .nav-toggle span {
+            display: block;
+            width: 26px;
+            height: 2.5px;
+            background: var(--text);
+            border-radius: 3px;
+            transition: var(--transition);
+        }
 
-body{
-background:#050816;
-color:white;
-overflow-x:hidden;
-}
+        /* ==================== MAIN CONTAINER ==================== */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+        }
 
-/* loading */
+        /* ==================== BANNER ==================== */
+        #banner {
+            text-align: center;
+            padding: 50px 20px 40px;
+            position: relative;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        #banner .banner-logo {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: contain;
+            box-shadow: 0 0 40px var(--accent-glow), 0 0 80px var(--accent-glow2);
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        #banner h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #fff 30%, #a0c4ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+        #banner .subtitle {
+            color: var(--text2);
+            font-size: 1.05rem;
+            margin-bottom: 24px;
+            letter-spacing: 0.5px;
+        }
+        #banner .btn-add {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 32px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            transition: var(--transition);
+            box-shadow: 0 6px 28px rgba(59, 130, 246, 0.4);
+            text-decoration: none;
+            animation: fadeInUp 1s ease-out;
+        }
+        #banner .btn-add:hover {
+            background: #2563eb;
+            box-shadow: 0 8px 36px rgba(59, 130, 246, 0.6);
+            transform: translateY(-2px);
+        }
 
-#loading{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:#050816;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-z-index:999999;
-}
+        /* ==================== SEARCH ==================== */
+        #searchWrap {
+            max-width: 600px;
+            margin: 0 auto 28px;
+            position: relative;
+            animation: fadeInUp 0.9s ease-out;
+        }
+        #searchInput {
+            width: 100%;
+            padding: 14px 20px 14px 48px;
+            border-radius: 50px;
+            border: 2px solid var(--glass-border);
+            background: var(--surface2);
+            color: var(--text);
+            font-size: 0.95rem;
+            transition: var(--transition);
+            letter-spacing: 0.3px;
+            outline: none;
+        }
+        #searchInput:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 24px var(--accent-glow2);
+            background: var(--surface3);
+        }
+        #searchWrap .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.1rem;
+            color: var(--text3);
+            pointer-events: none;
+        }
 
-#loading img{
-width:120px;
-height:120px;
-border-radius:50%;
-box-shadow:
-0 0 20px #00aaff,
-0 0 50px #0088ff;
-animation:spin 2s linear infinite;
-}
+        /* ==================== KATEGORI ==================== */
+        #categorySection {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 28px;
+            animation: fadeInUp 1s ease-out;
+        }
+        .cat-btn {
+            padding: 9px 20px;
+            border-radius: 50px;
+            border: 1.5px solid var(--glass-border);
+            background: var(--surface2);
+            color: var(--text2);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.85rem;
+            transition: var(--transition);
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+        .cat-btn:hover,
+        .cat-btn.active {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: var(--accent);
+            color: #fff;
+            box-shadow: 0 0 18px var(--accent-glow2);
+        }
+        .cat-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            font-weight: 700;
+            box-shadow: 0 0 22px var(--accent-glow);
+        }
 
-.loadingText{
-margin-top:20px;
-color:#66cfff;
-}
+        /* ==================== SECTION HEADER ==================== */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 18px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: 0.4px;
+            color: #fff;
+        }
+        .section-header .icon {
+            font-size: 1.4rem;
+        }
 
-@keyframes spin{
-100%{
-transform:rotate(360deg);
-}
-}
+        /* ==================== SLIDER HORIZONTAL ==================== */
+        .slider-horizontal {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            padding: 8px 4px 20px;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent) transparent;
+            margin-bottom: 20px;
+        }
+        .slider-horizontal::-webkit-scrollbar {
+            height: 5px;
+        }
+        .slider-horizontal::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .slider-horizontal::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 10px;
+        }
+        .slider-horizontal .product-card {
+            flex: 0 0 280px;
+            scroll-snap-align: start;
+        }
 
+        /* ==================== PRODUCT GRID ==================== */
+        #productGrid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 18px;
+            margin-bottom: 30px;
+        }
 
-/* navbar */
+        /* ==================== PRODUCT CARD ==================== */
+        .product-card {
+            background: var(--surface);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+            min-height: 420px;
+        }
+        .product-card:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 20px var(--accent-glow2);
+            transform: translateY(-3px);
+        }
+        .product-card .img-slider {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4/3;
+            background: #0d0d16;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .product-card .img-slider img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: opacity 0.3s ease;
+            background: #0d0d16;
+        }
+        .product-card .slider-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            border: none;
+            color: #fff;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            z-index: 2;
+            opacity: 0;
+        }
+        .product-card:hover .slider-nav {
+            opacity: 1;
+        }
+        .product-card .slider-nav.prev {
+            left: 6px;
+        }
+        .product-card .slider-nav.next {
+            right: 6px;
+        }
+        .product-card .slider-nav:hover {
+            background: var(--accent);
+        }
+        .product-card .slider-dots {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 5px;
+            z-index: 2;
+        }
+        .product-card .slider-dots span {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        .product-card .slider-dots span.active {
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent-glow);
+            width: 18px;
+            border-radius: 10px;
+        }
+        .product-card .badge {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 3;
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            pointer-events: none;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+        }
+        .badge-terlaris {
+            background: #f59e0b;
+            color: #000;
+        }
+        .badge-terbaik {
+            background: #8b5cf6;
+            color: #fff;
+        }
+        .badge-baru {
+            background: #10b981;
+            color: #fff;
+        }
+        .product-card .card-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #fff;
+            margin-bottom: 4px;
+            letter-spacing: 0.3px;
+            line-height: 1.3;
+        }
+        .product-card .card-price {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--accent);
+            margin-bottom: 4px;
+        }
+        .product-card .card-rating {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: #f59e0b;
+            margin-bottom: 4px;
+        }
+        .product-card .card-rating .stars {
+            letter-spacing: 1px;
+        }
+        .product-card .card-rating .info {
+            color: var(--text3);
+            font-size: 0.75rem;
+        }
+        .product-card .card-desc {
+            font-size: 0.8rem;
+            color: var(--text3);
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 8px;
+            flex-grow: 1;
+        }
+        .product-card .card-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: auto;
+        }
+        .product-card .card-actions button {
+            flex: 1;
+            min-width: 70px;
+            padding: 8px 12px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.8rem;
+            letter-spacing: 0.3px;
+            transition: var(--transition);
+        }
+        .btn-detail {
+            background: var(--surface3);
+            color: #fff;
+            border: 1px solid var(--glass-border) !important;
+        }
+        .btn-detail:hover {
+            background: var(--surface2);
+            border-color: var(--accent) !important;
+            box-shadow: 0 0 14px var(--accent-glow2);
+        }
+        .btn-beli {
+            background: var(--accent);
+            color: #fff;
+        }
+        .btn-beli:hover {
+            background: #2563eb;
+            box-shadow: 0 0 18px var(--accent-glow);
+        }
+        .btn-hapus {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3) !important;
+        }
+        .btn-hapus:hover {
+            background: rgba(239, 68, 68, 0.4);
+            box-shadow: 0 0 14px rgba(239, 68, 68, 0.3);
+        }
 
-nav{
-position:sticky;
-top:0;
-backdrop-filter:blur(12px);
-background:rgba(255,255,255,.05);
-padding:15px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-z-index:999;
-border-bottom:1px solid rgba(255,255,255,.1);
-}
+        /* ==================== EMPTY STATE ==================== */
+        #emptyState {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text3);
+            animation: fadeInUp 1s ease-out;
+            display: none;
+        }
+        #emptyState .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            animation: float 3s ease-in-out infinite;
+        }
+        #emptyState p {
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+        }
 
-.logoArea{
-display:flex;
-align-items:center;
-gap:10px;
-}
+        /* ==================== MODAL OVERLAY ==================== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9000;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .modal {
+            background: var(--surface);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 40px var(--accent-glow2);
+            position: relative;
+            animation: modalIn 0.35s ease-out;
+        }
+        @keyframes modalIn {
+            from {
+                transform: translateY(30px) scale(0.95);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+        .modal .close-modal {
+            position: absolute;
+            top: 14px;
+            right: 18px;
+            background: none;
+            border: none;
+            color: var(--text2);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            z-index: 5;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal .close-modal:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .modal .detail-img-slider {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4/3;
+            background: #0d0d16;
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal .detail-img-slider img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #0d0d16;
+        }
+        .modal .detail-slider-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            border: none;
+            color: #fff;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            z-index: 2;
+        }
+        .modal .detail-slider-nav.prev {
+            left: 10px;
+        }
+        .modal .detail-slider-nav.next {
+            right: 10px;
+        }
+        .modal .detail-slider-nav:hover {
+            background: var(--accent);
+        }
+        .modal .detail-dots {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-top: -8px;
+            margin-bottom: 12px;
+        }
+        .modal .detail-dots span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .modal .detail-dots span.active {
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent-glow);
+            width: 20px;
+            border-radius: 10px;
+        }
+        .modal h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #fff;
+        }
+        .modal .detail-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+        .modal .detail-meta {
+            font-size: 0.85rem;
+            color: var(--text3);
+            margin-bottom: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .modal .detail-desc {
+            color: var(--text2);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .modal .detail-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        .modal .detail-actions button {
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            letter-spacing: 0.3px;
+        }
 
-.logoArea img{
-width:55px;
-height:55px;
-border-radius:50%;
-box-shadow:0 0 20px #009dff;
-transition:.5s;
-}
+        /* ==================== RATING STARS INTERACTIVE ==================== */
+        .rating-stars-interactive {
+            display: flex;
+            gap: 4px;
+            font-size: 1.6rem;
+            cursor: pointer;
+            color: #555;
+            transition: var(--transition);
+        }
+        .rating-stars-interactive .star {
+            transition: var(--transition);
+            color: #555;
+        }
+        .rating-stars-interactive .star.hover,
+        .rating-stars-interactive .star.selected {
+            color: #f59e0b;
+            text-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+        }
 
-.logoArea img:hover{
-transform:scale(1.1);
-}
+        /* ==================== FORM STYLES ==================== */
+        .form-group {
+            margin-bottom: 14px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--text2);
+            font-size: 0.85rem;
+            letter-spacing: 0.3px;
+        }
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            border: 1.5px solid var(--glass-border);
+            background: var(--surface2);
+            color: var(--text);
+            font-size: 0.9rem;
+            transition: var(--transition);
+            outline: none;
+            font-family: inherit;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 14px var(--accent-glow2);
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+        .form-group .file-info {
+            font-size: 0.75rem;
+            color: var(--text3);
+            margin-top: 4px;
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            border-radius: 50px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            transition: var(--transition);
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+        }
+        .btn-submit:hover {
+            background: #2563eb;
+            box-shadow: 0 6px 28px rgba(59, 130, 246, 0.5);
+        }
+        .error-msg {
+            color: #ef4444;
+            font-size: 0.8rem;
+            margin-top: 4px;
+            font-weight: 500;
+            display: none;
+        }
 
-.brand{
-font-size:22px;
-font-weight:bold;
-background:linear-gradient(to right,#00bfff,#4dc3ff);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-}
+        /* ==================== SUPPORT SECTION ==================== */
+        #supportSection {
+            text-align: center;
+            padding: 30px 20px;
+            margin: 20px 0;
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--glass-border);
+        }
+        #supportSection a {
+            display: inline-block;
+            padding: 12px 28px;
+            background: #f59e0b;
+            color: #000;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            transition: var(--transition);
+            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.3);
+        }
+        #supportSection a:hover {
+            background: #d97706;
+            box-shadow: 0 6px 28px rgba(245, 158, 11, 0.5);
+            transform: translateY(-2px);
+        }
 
-.menu{
-display:flex;
-gap:20px;
-}
+        /* ==================== FOOTER ==================== */
+        #footer {
+            text-align: center;
+            padding: 30px 20px;
+            border-top: 1px solid var(--glass-border);
+            color: var(--text3);
+            font-size: 0.8rem;
+            line-height: 1.8;
+            letter-spacing: 0.3px;
+        }
+        #footer strong {
+            color: var(--text2);
+        }
+        #footer .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+        #footer .footer-links span {
+            cursor: pointer;
+            color: var(--accent);
+            text-decoration: underline;
+            transition: var(--transition);
+        }
+        #footer .footer-links span:hover {
+            color: #fff;
+        }
 
-.menu a{
-color:white;
-text-decoration:none;
-opacity:.8;
-}
+        /* ==================== TOAST ==================== */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.3px;
+            animation: toastIn 0.4s ease, toastOut 0.4s ease 2.5s forwards;
+            pointer-events: none;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+        }
+        .toast.success {
+            background: #10b981;
+            color: #fff;
+        }
+        .toast.error {
+            background: #ef4444;
+            color: #fff;
+        }
+        .toast.info {
+            background: var(--accent);
+            color: #fff;
+        }
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+        @keyframes toastOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-10px);
+            }
+        }
 
-.menu a:hover{
-color:#42bfff;
-}
-
-
-/* banner */
-
-.hero{
-padding:80px 20px;
-text-align:center;
-}
-
-.hero img{
-width:140px;
-height:140px;
-border-radius:50%;
-box-shadow:0 0 30px #00aaff;
-margin-bottom:20px;
-}
-
-.hero h1{
-font-size:35px;
-margin-bottom:10px;
-}
-
-.hero p{
-opacity:.7;
-margin-bottom:25px;
-}
-
-.btn{
-padding:13px 25px;
-border:none;
-border-radius:30px;
-cursor:pointer;
-background:linear-gradient(90deg,#0088ff,#00d5ff);
-color:white;
-font-weight:bold;
-}
-
-.btn:hover{
-transform:scale(1.05);
-}
-
-
-/* search */
-
-.searchBox{
-padding:20px;
-text-align:center;
-}
-
-.searchBox input{
-width:90%;
-max-width:600px;
-padding:15px;
-border:none;
-border-radius:50px;
-background:#10182c;
-color:white;
-}
-
-
-/* kategori */
-
-#kategoriContainer{
-display:flex;
-gap:10px;
-overflow:auto;
-padding:15px;
-}
-
-.kategoriBtn{
-padding:10px 18px;
-border-radius:30px;
-border:none;
-background:#111d36;
-color:white;
-cursor:pointer;
-}
-
-.kategoriBtn:hover{
-background:#0099ff;
-}
-
-
-/* produk */
-
-.productGrid{
-display:grid;
-grid-template-columns:
-repeat(auto-fit,minmax(260px,1fr));
-
-gap:25px;
-padding:25px;
-}
-
-.card{
-background:rgba(255,255,255,.05);
-
-backdrop-filter:blur(10px);
-
-border-radius:25px;
-
-padding:15px;
-
-box-shadow:
-0 0 20px rgba(0,153,255,.2);
-
-transition:.5s;
-}
-
-.card:hover{
-transform:translateY(-10px);
-}
-
-.card img{
-width:100%;
-height:220px;
-object-fit:cover;
-border-radius:20px;
-}
-
-.card h3{
-margin-top:10px;
-}
-
-.price{
-color:#3ebcff;
-font-size:20px;
-font-weight:bold;
-margin:10px 0;
-}
-
-.badge{
-background:#ff5e00;
-padding:6px 12px;
-border-radius:20px;
-display:inline-block;
-margin-bottom:10px;
-}
-
-.empty{
-text-align:center;
-padding:60px;
-opacity:.6;
-}
-
-
-/* modal */
-
-.modal{
-display:none;
-position:fixed;
-width:100%;
-height:100%;
-background:rgba(0,0,0,.8);
-top:0;
-left:0;
-z-index:9999;
-justify-content:center;
-align-items:center;
-}
-
-.modalContent{
-background:#091221;
-padding:25px;
-width:95%;
-max-width:600px;
-border-radius:30px;
-max-height:90vh;
-overflow:auto;
-}
-
-input,textarea,select{
-width:100%;
-padding:14px;
-margin:8px 0;
-background:#10182c;
-border:none;
-border-radius:12px;
-color:white;
-}
-
-.close{
-float:right;
-cursor:pointer;
-font-size:25px;
-}
-
-footer{
-text-align:center;
-padding:50px;
-}
-
-.support{
-background:#00a2ff;
-padding:12px 25px;
-display:inline-block;
-border-radius:30px;
-text-decoration:none;
-color:white;
-margin-top:20px;
-}
-</style>
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            #navbar {
+                padding: 10px 16px;
+                gap: 8px;
+                border-radius: var(--radius-lg);
+            }
+            #navbar .nav-brand img {
+                width: 36px;
+                height: 36px;
+            }
+            #navbar .nav-brand .brand-name {
+                font-size: 1rem;
+            }
+            #navbar .nav-brand .brand-tagline {
+                font-size: 0.65rem;
+            }
+            #navbar .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--surface);
+                border: 1px solid var(--glass-border);
+                border-radius: var(--radius-lg);
+                flex-direction: column;
+                padding: 12px;
+                gap: 4px;
+                margin-top: 8px;
+                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+            }
+            #navbar .nav-links.open {
+                display: flex;
+            }
+            #navbar .nav-toggle {
+                display: flex;
+            }
+            #banner h1 {
+                font-size: 1.6rem;
+            }
+            #banner .banner-logo {
+                width: 65px;
+                height: 65px;
+            }
+            #productGrid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 12px;
+            }
+            .slider-horizontal .product-card {
+                flex: 0 0 240px;
+            }
+            .modal {
+                padding: 16px;
+                border-radius: var(--radius-lg);
+                max-height: 90vh;
+            }
+        }
+        @media (max-width: 480px) {
+            #productGrid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            .product-card {
+                padding: 10px;
+                min-height: 360px;
+            }
+            .product-card .card-name {
+                font-size: 0.82rem;
+            }
+            .product-card .card-price {
+                font-size: 0.9rem;
+            }
+            .product-card .card-actions button {
+                font-size: 0.7rem;
+                padding: 6px 10px;
+            }
+            .slider-horizontal .product-card {
+                flex: 0 0 200px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-
-<div id="loading">
-<img src="logo.png">
-<div class="loadingText">
-COMOT STORE
-</div>
-</div>
-
-
-
-<nav>
-
-<div class="logoArea">
-
-<img src="logo.png">
-
-<div class="brand">
-COMOT STORE
-</div>
-
-</div>
-
-<div class="menu">
-<a href="#">Home</a>
-<a href="#">Produk</a>
-<a href="#">Kategori</a>
-<a href="#">Terlaris</a>
-<a href="#">Support</a>
-<a href="#">Kontak</a>
-</div>
-
-</nav>
-
-
-
-<section class="hero">
-
-<img src="logo.png">
-
-<h1>
-Temukan Produk Digital Premium
-</h1>
-
-<p>
-Poster, Script, Ebook dan lainnya
-</p>
-
-<button class="btn"
-onclick="openModal()">
-
-Tambah Produk
-
-</button>
-
-</section>
-
-
-
-<div class="searchBox">
-
-<input
-id="search"
-placeholder="Cari produk...">
-
-</div>
-
-
-<div id="kategoriContainer">
-
-<button
-class="kategoriBtn">
-Semua
-</button>
-
-<button
-class="kategoriBtn">
-Poster
-</button>
-
-<button
-class="kategoriBtn">
-Script
-</button>
-
-<button
-class="kategoriBtn">
-Ebook
-</button>
-
-<button
-class="kategoriBtn">
-Lainnya
-</button>
-
-</div>
-
-
-
-<div
-class="productGrid"
-id="produk">
-
-<div class="empty">
-Belum ada produk
-</div>
-
-</div>
-
-
-
-<div class="modal" id="modal">
-
-<div class="modalContent">
-
-<div
-class="close"
-onclick="closeModal()">
-✕
-</div>
-
-<h2>Tambah Produk</h2>
-
-<input
-type="file"
-id="foto"
-multiple
-accept="image/*">
-
-<input
-id="nama"
-placeholder="Nama produk">
-
-<textarea
-id="deskripsi"
-placeholder="Deskripsi">
-</textarea>
-
-<input
-id="harga"
-placeholder="Harga">
-
-<input
-id="kategori"
-placeholder="Kategori">
-
-<input
-id="kontak"
-placeholder="Kontak Penjual">
-
-<select id="status">
-<option>Produk Baru</option>
-<option>Terlaris</option>
-<option>Terbaik</option>
-</select>
-
-<button
-class="btn"
-onclick="tambahProduk()">
-
-Posting Produk
-
-</button>
-
-</div>
-
-</div>
-
-
-
-<footer>
-
-<h2>Support</h2>
-
-<a
-class="support"
-href="https://saweria.co/Maxc88">
-
-Dukung Creator
-
-</a>
-
-<br><br>
-
-<a
-class="support"
-href="https://t.me/Bababaaba07">
-
-Kontak Telegram
-
-</a>
-
-</footer>
-
-
-
-<script>
-
-/*
-
-Contoh data:
-
-[
-{
-nama:"Poster FF",
-harga:"5000",
-kategori:"Poster",
-foto:[],
-rating:5
-}
-]
-
-*/
-
-setTimeout(()=>{
-
-loading.style.display="none"
-
-},2000)
-
-
-
-function openModal(){
-
-modal.style.display="flex"
-
-}
-
-function closeModal(){
-
-modal.style.display="none"
-
-}
-
-
-
-let data=
-JSON.parse(
-localStorage.getItem(
-"produkComot"
-)
-)||[]
-
-
-
-function tampilkan(){
-
-let box=
-document.getElementById(
-"produk"
-)
-
-box.innerHTML=""
-
-if(data.length==0){
-
-box.innerHTML=
-`<div class='empty'>
-Belum ada produk
-</div>`
-
-return
-
-}
-
-
-
-data.forEach((x,i)=>{
-
-box.innerHTML+=`
-
-<div class='card'>
-
-${x.status=="Terlaris"
-?'<div class="badge">🔥 Produk Terlaris</div>'
-:""}
-
-<img src="${
-x.foto[0]
-||'logo.png'
-}">
-
-<h3>${x.nama}</h3>
-
-<div class="price">
-
-Rp ${x.harga}
-
-</div>
-
-<div>
-★★★★★
-(${x.rating||0})
-</div>
-
-<button
-class="btn"
-
-onclick="beli('${x.nama}','${x.harga}')">
-
-Beli
-
-</button>
-
-</div>
-
-`
-
-})
-
-}
-
-tampilkan()
-
-
-function tambahProduk(){
-
-let file=
-document
-.getElementById(
-"foto"
-).files
-
-
-if(file.length>6){
-
-alert(
-"maksimal 6 foto"
-)
-
-return
-
-}
-
-
-let arr=[]
-
-for(let i=0;i<
-file.length;i++){
-
-let reader=
-new FileReader()
-
-reader.onload=
-e=>{
-
-arr.push(
-e.target.result
-)
-
-if(
-arr.length==
-file.length
-){
-
-simpan(arr)
-
-}
-
-}
-
-reader.readAsDataURL(
-file[i]
-)
-
-}
-
-if(file.length==0){
-
-simpan([])
-
-}
-
-}
-
-
-
-function simpan(foto){
-
-data.push({
-
-nama:nama.value,
-
-deskripsi:
-deskripsi.value,
-
-harga:harga.value,
-
-kategori:
-kategori.value,
-
-kontak:
-kontak.value,
-
-status:
-status.value,
-
-foto:foto,
-
-rating:0
-
-})
-
-localStorage.setItem(
-"produkComot",
-JSON.stringify(data)
-)
-
-closeModal()
-
-tampilkan()
-
-}
-
-
-
-function beli(
-nama,
-harga
-){
-
-let text=
-
-`Halo, saya ingin membeli ${nama}
-
-Harga:${harga}
-
-Apakah produk masih tersedia?`
-
-window.open(
-
-"https://t.me/Bababaaba07?text="+
-
-encodeURIComponent(text)
-
-)
-
-}
-
-
-search.oninput=()=>{
-
-let keyword=
-search.value
-.toLowerCase()
-
-document
-.querySelectorAll(
-".card"
-)
-
-.forEach(x=>{
-
-x.style.display=
-
-x.innerText
-.toLowerCase()
-.includes(keyword)
-
-?
-
-"block"
-
-:
-
-"none"
-
-})
-
-}
-
-</script>
-
+    <!-- ==================== LOADING SCREEN ==================== -->
+    <div id="loadingScreen">
+        <div class="loader-ring">
+            <img src="logo.png" alt="COMOT STORE Logo" onerror="this.style.background='#1c1c28';this.style.borderRadius='50%';">
+        </div>
+        <div class="loading-text">COMOT STORE</div>
+    </div>
+
+    <!-- ==================== NAVBAR ==================== -->
+    <nav id="navbar">
+        <a href="#" class="nav-brand" title="COMOT STORE - Beranda">
+            <img src="logo.png" alt="Logo COMOT STORE" onerror="this.style.background='#1c1c28';this.style.borderRadius='50%';">
+            <div class="brand-text">
+                <span class="brand-name">COMOT STORE</span>
+                <span class="brand-tagline">Marketplace Produk Digital Premium</span>
+            </div>
+        </a>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#home" data-nav="home">Home</a></li>
+            <li><a href="#produkSection" data-nav="produk">Produk</a></li>
+            <li><a href="#terlarisSection" data-nav="terlaris">Terlaris</a></li>
+            <li><a href="#terbaikSection" data-nav="terbaik">Terbaik</a></li>
+            <li><a href="#supportSection" data-nav="support">Support</a></li>
+        </ul>
+    </nav>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <main class="container" id="home">
+        <!-- BANNER -->
+        <section id="banner">
+            <img src="logo.png" alt="COMOT STORE" class="banner-logo" onerror="this.style.background='#1c1c28';this.style.borderRadius='50%';">
+            <h1>Temukan Produk Digital Premium</h1>
+            <p class="subtitle">Poster, Script, Ebook dan lainnya</p>
+            <button class="btn-add" id="btnTambahProduk">&#10011; Tambah Produk</button>
+        </section>
+
+        <!-- SEARCH -->
+        <div id="searchWrap">
+            <span class="search-icon">&#128269;</span>
+            <input type="text" id="searchInput" placeholder="Cari produk... (nama, deskripsi, kategori)">
+        </div>
+
+        <!-- KATEGORI -->
+        <div id="categorySection">
+            <button class="cat-btn active" data-cat="semua">📦 Semua</button>
+            <button class="cat-btn" data-cat="🔥 Terlaris">🔥 Terlaris</button>
+            <button class="cat-btn" data-cat="⭐ Terbaik">⭐ Terbaik</button>
+        </div>
+
+        <!-- PRODUK TERLARIS -->
+        <section id="terlarisSection">
+            <div class="section-header"><span class="icon">🔥</span> Produk Terlaris</div>
+            <div class="slider-horizontal" id="sliderTerlaris"></div>
+        </section>
+
+        <!-- PRODUK TERBAIK -->
+        <section id="terbaikSection">
+            <div class="section-header"><span class="icon">⭐</span> Produk Terbaik</div>
+            <div class="slider-horizontal" id="sliderTerbaik"></div>
+        </section>
+
+        <!-- SEMUA PRODUK -->
+        <section id="produkSection">
+            <div class="section-header"><span class="icon">🛒</span> Semua Produk</div>
+            <div id="productGrid"></div>
+            <div id="emptyState">
+                <div class="empty-icon">📭</div>
+                <p>Belum ada produk</p>
+            </div>
+        </section>
+
+        <!-- SUPPORT -->
+        <section id="supportSection">
+            <p style="margin-bottom:12px;color:var(--text2);">💖 Dukung pengembangan COMOT STORE</p>
+            <a href="https://saweria.co/Maxc88" target="_blank" rel="noopener">💰 Donasi via Saweria</a>
+        </section>
+    </main>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer id="footer">
+        <div class="footer-links">
+            <span id="btnTentang">📖 Tentang COMOT STORE</span>
+            <span id="btnPrivasi">🔒 Kebijakan Privasi</span>
+            <span id="btnSyarat">📜 Syarat & Ketentuan</span>
+        </div>
+        <p>© <strong>COMOT STORE</strong> — Marketplace Produk Digital Premium</p>
+    </footer>
+
+    <!-- ==================== MODAL: TAMBAH PRODUK ==================== -->
+    <div class="modal-overlay" id="modalTambah">
+        <div class="modal">
+            <button class="close-modal" id="closeModalTambah">&times;</button>
+            <h3 style="margin-bottom:16px;">📦 Tambah Produk Baru</h3>
+            <form id="formTambahProduk" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label>📸 Upload Foto (maks 6)</label>
+                    <input type="file" id="inputFoto" accept="image/*" multiple>
+                    <div class="file-info" id="fileInfo">0/6 foto dipilih</div>
+                </div>
+                <div class="form-group">
+                    <label>📝 Nama Produk <span style="color:#ef4444;">*</span></label>
+                    <input type="text" id="inputNama" placeholder="contoh: Poster Hari Buku Nasional" required>
+                    <div class="error-msg" id="errNama"></div>
+                </div>
+                <div class="form-group">
+                    <label>📄 Deskripsi</label>
+                    <textarea id="inputDeskripsi" placeholder="Deskripsikan produk..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>💰 Harga</label>
+                    <input type="text" id="inputHarga" placeholder="contoh: Rp 15.000 atau Gratis">
+                </div>
+                <div class="form-group">
+                    <label>🏷️ Kategori Produk <span style="color:#ef4444;">*</span></label>
+                    <input type="text" id="inputKategori" placeholder="contoh: Poster, Script, Ebook, Bot Telegram, Template, Rak Dapur" required list="kategoriList">
+                    <datalist id="kategoriList"></datalist>
+                    <div class="error-msg" id="errKategori"></div>
+                </div>
+                <div class="form-group">
+                    <label>📞 Kontak Penjual <span style="color:#ef4444;">*</span></label>
+                    <input type="text" id="inputKontak" placeholder="https://t.me/username atau @username atau WhatsApp" required>
+                </div>
+                <div class="form-group">
+                    <label>🏅 Status Produk</label>
+                    <select id="inputStatus">
+                        <option value="Baru">🆕 Baru</option>
+                        <option value="Terlaris">🔥 Terlaris</option>
+                        <option value="Terbaik">⭐ Terbaik</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-submit">✅ Tambahkan Produk</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: DETAIL PRODUK ==================== -->
+    <div class="modal-overlay" id="modalDetail">
+        <div class="modal" id="modalDetailContent"></div>
+    </div>
+
+    <!-- ==================== MODAL: RATING ==================== -->
+    <div class="modal-overlay" id="modalRating">
+        <div class="modal" style="text-align:center;">
+            <button class="close-modal" id="closeModalRating">&times;</button>
+            <h3 style="margin-bottom:12px;">⭐ Beri Rating</h3>
+            <p id="ratingProductName" style="color:var(--text2);margin-bottom:14px;"></p>
+            <div class="rating-stars-interactive" id="ratingStars">
+                <span class="star" data-val="1">★</span>
+                <span class="star" data-val="2">★</span>
+                <span class="star" data-val="3">★</span>
+                <span class="star" data-val="4">★</span>
+                <span class="star" data-val="5">★</span>
+            </div>
+            <p id="ratingHint" style="color:var(--text3);margin-top:8px;font-size:0.85rem;">Klik bintang untuk memberi rating</p>
+            <button class="btn-submit" id="btnSubmitRating" style="margin-top:14px;">Kirim Rating</button>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: INFO (TENTANG/PRIVASI/SYARAT) ==================== -->
+    <div class="modal-overlay" id="modalInfo">
+        <div class="modal" id="modalInfoContent" style="max-width:550px;"></div>
+    </div>
+
+    <!-- ==================== TOAST CONTAINER ==================== -->
+    <div id="toastContainer"></div>
+
+    <script>
+        (function() {
+            // ==================== DEVICE ID ====================
+            function getDeviceId() {
+                let did = localStorage.getItem('comot_device_id');
+                if (!did) {
+                    did = 'dev_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 9);
+                    localStorage.setItem('comot_device_id', did);
+                }
+                return did;
+            }
+            const DEVICE_ID = getDeviceId();
+
+            // ==================== DATA STORAGE ====================
+            const STORAGE_KEY = 'comot_store_products';
+            const RATING_KEY = 'comot_store_ratings';
+            const CATEGORY_KEY = 'comot_store_categories';
+            const PURCHASE_KEY = 'comot_store_purchases';
+
+            function getProducts() {
+                try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch (e) { return []; }
+            }
+
+            function saveProducts(products) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
+            }
+
+            function getRatings() {
+                try { return JSON.parse(localStorage.getItem(RATING_KEY)) || {}; } catch (e) { return {}; }
+            }
+
+            function saveRatings(ratings) {
+                localStorage.setItem(RATING_KEY, JSON.stringify(ratings));
+            }
+
+            function getCustomCategories() {
+                try { return JSON.parse(localStorage.getItem(CATEGORY_KEY)) || []; } catch (e) { return []; }
+            }
+
+            function saveCustomCategories(cats) {
+                localStorage.setItem(CATEGORY_KEY, JSON.stringify(cats));
+            }
+
+            function getPurchases() {
+                try { return JSON.parse(localStorage.getItem(PURCHASE_KEY)) || {}; } catch (e) { return {}; }
+            }
+
+            function savePurchases(purchases) {
+                localStorage.setItem(PURCHASE_KEY, JSON.stringify(purchases));
+            }
+
+            // ==================== STATE ====================
+            let allProducts = getProducts();
+            let allRatings = getRatings();
+            let customCategories = getCustomCategories();
+            let allPurchases = getPurchases();
+            let currentFilter = 'semua';
+            let searchQuery = '';
+            let currentRatingProductId = null;
+            let currentRatingValue = 0;
+
+            // ==================== DOM REFS ====================
+            const $loadingScreen = document.getElementById('loadingScreen');
+            const $productGrid = document.getElementById('productGrid');
+            const $emptyState = document.getElementById('emptyState');
+            const $sliderTerlaris = document.getElementById('sliderTerlaris');
+            const $sliderTerbaik = document.getElementById('sliderTerbaik');
+            const $categorySection = document.getElementById('categorySection');
+            const $searchInput = document.getElementById('searchInput');
+            const $modalTambah = document.getElementById('modalTambah');
+            const $modalDetail = document.getElementById('modalDetail');
+            const $modalDetailContent = document.getElementById('modalDetailContent');
+            const $modalRating = document.getElementById('modalRating');
+            const $modalInfo = document.getElementById('modalInfo');
+            const $modalInfoContent = document.getElementById('modalInfoContent');
+            const $ratingStars = document.getElementById('ratingStars');
+            const $ratingProductName = document.getElementById('ratingProductName');
+            const $ratingHint = document.getElementById('ratingHint');
+            const $btnSubmitRating = document.getElementById('btnSubmitRating');
+            const $toastContainer = document.getElementById('toastContainer');
+            const $formTambahProduk = document.getElementById('formTambahProduk');
+            const $inputFoto = document.getElementById('inputFoto');
+            const $fileInfo = document.getElementById('fileInfo');
+            const $inputNama = document.getElementById('inputNama');
+            const $inputDeskripsi = document.getElementById('inputDeskripsi');
+            const $inputHarga = document.getElementById('inputHarga');
+            const $inputKategori = document.getElementById('inputKategori');
+            const $inputKontak = document.getElementById('inputKontak');
+            const $inputStatus = document.getElementById('inputStatus');
+            const $errNama = document.getElementById('errNama');
+            const $errKategori = document.getElementById('errKategori');
+            const $kategoriList = document.getElementById('kategoriList');
+            const $navToggle = document.getElementById('navToggle');
+            const $navLinks = document.getElementById('navLinks');
+
+            let uploadedFiles = [];
+
+            // ==================== LOADING SCREEN ====================
+            window.addEventListener('load', () => {
+                setTimeout(() => {
+                    $loadingScreen.classList.add('hidden');
+                }, 1800);
+            });
+            // Fallback: jika load terlalu cepat
+            setTimeout(() => {
+                if (!$loadingScreen.classList.contains('hidden')) {
+                    $loadingScreen.classList.add('hidden');
+                }
+            }, 2500);
+
+            // ==================== TOAST ====================
+            function showToast(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.className = 'toast ' + type;
+                toast.textContent = message;
+                $toastContainer.appendChild(toast);
+                setTimeout(() => {
+                    if (toast.parentNode) toast.parentNode.removeChild(toast);
+                }, 3000);
+            }
+
+            // ==================== NAV TOGGLE ====================
+            $navToggle.addEventListener('click', () => {
+                $navLinks.classList.toggle('open');
+            });
+            document.addEventListener('click', (e) => {
+                if (!$navToggle.contains(e.target) && !$navLinks.contains(e.target)) {
+                    $navLinks.classList.remove('open');
+                }
+            });
+            $navLinks.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    $navLinks.classList.remove('open');
+                });
+            });
+
+            // ==================== CATEGORY RENDERING ====================
+            function getAllCategories() {
+                const builtIn = ['🔥 Terlaris', '⭐ Terbaik'];
+                const fromProducts = allProducts.map(p => p.kategori).filter(Boolean);
+                const all = [...new Set([...builtIn, ...customCategories, ...fromProducts])];
+                return all;
+            }
+
+            function renderCategoryButtons() {
+                // Hapus tombol kategori lama (kecuali 3 tombol pertama: Semua, Terlaris, Terbaik)
+                const existingButtons = $categorySection.querySelectorAll('.cat-btn');
+                const toRemove = [];
+                existingButtons.forEach(btn => {
+                    const cat = btn.getAttribute('data-cat');
+                    if (cat !== 'semua' && cat !== '🔥 Terlaris' && cat !== '⭐ Terbaik') {
+                        toRemove.push(btn);
+                    }
+                });
+                toRemove.forEach(b => b.remove());
+
+                const allCats = getAllCategories();
+                allCats.forEach(cat => {
+                    if (cat === '🔥 Terlaris' || cat === '⭐ Terbaik') return; // sudah ada
+                    if (!$categorySection.querySelector(`[data-cat="${CSS.escape(cat)}"]`)) {
+                        const btn = document.createElement('button');
+                        btn.className = 'cat-btn';
+                        btn.setAttribute('data-cat', cat);
+                        btn.textContent = '🏷️ ' + cat;
+                        btn.addEventListener('click', () => {
+                            setActiveCategory(cat);
+                        });
+                        $categorySection.appendChild(btn);
+                    }
+                });
+
+                // Update active state
+                const allBtns = $categorySection.querySelectorAll('.cat-btn');
+                allBtns.forEach(b => {
+                    b.classList.remove('active');
+                    if (b.getAttribute('data-cat') === currentFilter) b.classList.add('active');
+                });
+                // Update datalist
+                $kategoriList.innerHTML = '';
+                allCats.forEach(cat => {
+                    const opt = document.createElement('option');
+                    opt.value = cat;
+                    $kategoriList.appendChild(opt);
+                });
+            }
+
+            function setActiveCategory(cat) {
+                currentFilter = cat;
+                renderCategoryButtons();
+                renderAll();
+            }
+
+            // Initial category buttons
+            $categorySection.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const cat = btn.getAttribute('data-cat');
+                    setActiveCategory(cat);
+                });
+            });
+
+            // ==================== HELPER: RATING CALC ====================
+            function getProductRating(productId) {
+                const ratings = allRatings[productId] || {};
+                const values = Object.values(ratings);
+                if (values.length === 0) return { avg: 0, count: 0 };
+                const sum = values.reduce((a, b) => a + b, 0);
+                return { avg: sum / values.length, count: values.length };
+            }
+
+            function getProductPurchaseCount(productId) {
+                return allPurchases[productId] || 0;
+            }
+
+            function renderStars(avg) {
+                const full = Math.floor(avg);
+                const half = avg - full >= 0.5 ? 1 : 0;
+                const empty = 5 - full - half;
+                return '★'.repeat(full) + (half ? '⯨' : '') + '☆'.repeat(empty);
+            }
+
+            // ==================== RENDER PRODUCT CARD HTML ====================
+            function createProductCard(product) {
+                const rating = getProductRating(product.id);
+                const purchaseCount = getProductPurchaseCount(product.id);
+                const avgRating = rating.count > 0 ? rating.avg.toFixed(1) : '0.0';
+                const starsStr = renderStars(rating.avg);
+                const isOwner = product.owner === DEVICE_ID;
+                const fotos = product.foto || [];
+                const hasMultipleFotos = fotos.length > 1;
+                const badgeClass = product.status === 'Terlaris' ? 'badge-terlaris' :
+                    product.status === 'Terbaik' ? 'badge-terbaik' : 'badge-baru';
+                const badgeEmoji = product.status === 'Terlaris' ? '🔥' :
+                    product.status === 'Terbaik' ? '⭐' : '🆕';
+                const badgeLabel = product.status === 'Terlaris' ? 'Produk Terlaris' :
+                    product.status === 'Terbaik' ? 'Produk Terbaik' : 'Produk Baru';
+
+                let sliderHTML = '';
+                if (fotos.length === 0) {
+                    sliderHTML = `<img src="logo.png" alt="No image" style="object-fit:contain;background:#0d0d16;" onerror="this.style.background='#1c1c28';this.style.borderRadius='8px';">`;
+                } else if (fotos.length === 1) {
+                    sliderHTML = `<img src="${fotos[0]}" alt="${escapeHTML(product.nama)}" style="object-fit:contain;background:#0d0d16;">`;
+                } else {
+                    sliderHTML = `
+                <img src="${fotos[0]}" alt="${escapeHTML(product.nama)}" class="slider-img" data-index="0" style="object-fit:contain;background:#0d0d16;">
+                ${hasMultipleFotos ? `<button class="slider-nav prev" data-action="prev">◀</button><button class="slider-nav next" data-action="next">▶</button>` : ''}
+                <div class="slider-dots">
+                  ${fotos.map((_, i) => `<span data-dot="${i}" class="${i===0?'active':''}"></span>`).join('')}
+                </div>`;
+                }
+
+                return `
+            <div class="product-card" data-product-id="${product.id}" data-kategori="${escapeHTML(product.kategori || '')}" data-status="${product.status || 'Baru'}">
+              ${product.status && product.status !== 'Baru' ? `<span class="badge ${badgeClass}">${badgeEmoji} ${badgeLabel}</span>` : ''}
+              <div class="img-slider" data-slider-id="${product.id}">
+                ${sliderHTML}
+              </div>
+              <div class="card-name">${escapeHTML(product.nama)}</div>
+              <div class="card-price">${escapeHTML(product.harga || 'Gratis')}</div>
+              <div class="card-rating">
+                <span class="stars">${starsStr}</span>
+                <span class="info">${avgRating} (${rating.count} rating) · ${purchaseCount} laku</span>
+              </div>
+              <div class="card-desc">${escapeHTML(product.deskripsi || 'Tidak ada deskripsi')}</div>
+              <div class="card-actions">
+                <button class="btn-detail" data-action="detail">Lihat Detail</button>
+                <button class="btn-beli" data-action="beli">Beli</button>
+                ${isOwner ? `<button class="btn-hapus" data-action="hapus">Hapus</button>` : ''}
+              </div>
+            </div>`;
+            }
+
+            function escapeHTML(str) {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+
+            // ==================== RENDER ALL ====================
+            function getFilteredProducts() {
+                let filtered = [...allProducts];
+                // Filter kategori
+                if (currentFilter === '🔥 Terlaris') {
+                    filtered = filtered.filter(p => p.status === 'Terlaris');
+                } else if (currentFilter === '⭐ Terbaik') {
+                    filtered = filtered.filter(p => p.status === 'Terbaik');
+                } else if (currentFilter !== 'semua') {
+                    filtered = filtered.filter(p => p.kategori && p.kategori.toLowerCase() === currentFilter
+                        .toLowerCase());
+                }
+                // Search
+                if (searchQuery.trim()) {
+                    const q = searchQuery.trim().toLowerCase();
+                    filtered = filtered.filter(p =>
+                        (p.nama && p.nama.toLowerCase().includes(q)) ||
+                        (p.deskripsi && p.deskripsi.toLowerCase().includes(q)) ||
+                        (p.kategori && p.kategori.toLowerCase().includes(q))
+                    );
+                }
+                return filtered;
+            }
+
+            function renderAll() {
+                const filtered = getFilteredProducts();
+                // Grid
+                if (filtered.length === 0) {
+                    $productGrid.innerHTML = '';
+                    $emptyState.style.display = 'block';
+                } else {
+                    $emptyState.style.display = 'none';
+                    $productGrid.innerHTML = filtered.map(p => createProductCard(p)).join('');
+                }
+                // Slider Terlaris
+                const terlaris = [...allProducts]
+                    .filter(p => getProductPurchaseCount(p.id) > 0)
+                    .sort((a, b) => getProductPurchaseCount(b.id) - getProductPurchaseCount(a.id))
+                    .slice(0, 15);
+                if (terlaris.length === 0 && allProducts.length > 0) {
+                    // Fallback: tampilkan produk dengan status Terlaris
+                    const fallbackTerlaris = allProducts.filter(p => p.status === 'Terlaris').slice(0, 10);
+                    $sliderTerlaris.innerHTML = fallbackTerlaris.length > 0 ?
+                        fallbackTerlaris.map(p => createProductCard(p)).join('') :
+                        '<p style="color:var(--text3);padding:20px;">Belum ada produk terlaris</p>';
+                } else if (terlaris.length > 0) {
+                    $sliderTerlaris.innerHTML = terlaris.map(p => createProductCard(p)).join('');
+                } else {
+                    $sliderTerlaris.innerHTML =
+                        '<p style="color:var(--text3);padding:20px;">Belum ada produk terlaris</p>';
+                }
+                // Slider Terbaik
+                const terbaik = [...allProducts]
+                    .map(p => {
+                        const r = getProductRating(p.id);
+                        const pc = getProductPurchaseCount(p.id);
+                        const score = r.avg + pc + r.count;
+                        return { product: p, score };
+                    })
+                    .sort((a, b) => b.score - a.score)
+                    .slice(0, 15);
+                if (terbaik.length > 0) {
+                    $sliderTerbaik.innerHTML = terbaik.map(t => createProductCard(t.product)).join('');
+                } else {
+                    $sliderTerbaik.innerHTML =
+                        '<p style="color:var(--text3);padding:20px;">Belum ada produk terbaik</p>';
+                }
+                // Attach event listeners ke semua card
+                attachCardEvents();
+                // Render kategori
+                renderCategoryButtons();
+            }
+
+            function attachCardEvents() {
+                // Slider dalam card
+                document.querySelectorAll('.img-slider[data-slider-id]').forEach(slider => {
+                    const productId = slider.getAttribute('data-slider-id');
+                    const product = allProducts.find(p => p.id === productId);
+                    if (!product || !product.foto || product.foto.length <= 1) return;
+                    const fotos = product.foto;
+                    let currentIdx = 0;
+                    const img = slider.querySelector('.slider-img');
+                    const dots = slider.querySelectorAll('[data-dot]');
+                    const prevBtn = slider.querySelector('[data-action="prev"]');
+                    const nextBtn = slider.querySelector('[data-action="next"]');
+
+                    function updateSlider(idx) {
+                        currentIdx = idx;
+                        if (img) img.src = fotos[idx];
+                        if (dots) {
+                            dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+                        }
+                    }
+                    if (prevBtn) prevBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const newIdx = (currentIdx - 1 + fotos.length) % fotos.length;
+                        updateSlider(newIdx);
+                    });
+                    if (nextBtn) nextBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const newIdx = (currentIdx + 1) % fotos.length;
+                        updateSlider(newIdx);
+                    });
+                    if (dots) {
+                        dots.forEach(dot => {
+                            dot.addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                const idx = parseInt(dot.getAttribute('data-dot'));
+                                updateSlider(idx);
+                            });
+                        });
+                    }
+                });
+
+                // Tombol di card
+                document.querySelectorAll('.product-card').forEach(card => {
+                    const pid = card.getAttribute('data-product-id');
+                    card.querySelector('[data-action="detail"]')?.addEventListener('click', () =>
+                        openDetailModal(pid));
+                    card.querySelector('[data-action="beli"]')?.addEventListener('click', () =>
+                    handleBeli(pid));
+                    card.querySelector('[data-action="hapus"]')?.addEventListener('click', () =>
+                        handleHapus(pid));
+                });
+            }
+
+            // ==================== MODAL DETAIL ====================
+            function openDetailModal(productId) {
+                const product = allProducts.find(p => p.id === productId);
+                if (!product) return;
+                const rating = getProductRating(product.id);
+                const purchaseCount = getProductPurchaseCount(product.id);
+                const avgRating = rating.count > 0 ? rating.avg.toFixed(1) : '0.0';
+                const fotos = product.foto || [];
+                const isOwner = product.owner === DEVICE_ID;
+
+                let sliderHTML = '';
+                if (fotos.length === 0) {
+                    sliderHTML =
+                        `<img src="logo.png" alt="No image" style="object-fit:contain;background:#0d0d16;width:100%;height:100%;" onerror="this.style.background='#1c1c28';this.style.borderRadius='8px';">`;
+                } else if (fotos.length === 1) {
+                    sliderHTML =
+                        `<img src="${fotos[0]}" alt="${escapeHTML(product.nama)}" style="object-fit:contain;background:#0d0d16;width:100%;height:100%;">`;
+                } else {
+                    sliderHTML = `
+                <img src="${fotos[0]}" alt="${escapeHTML(product.nama)}" id="detailMainImg" style="object-fit:contain;background:#0d0d16;width:100%;height:100%;">
+                <button class="detail-slider-nav prev" id="detailPrev">◀</button>
+                <button class="detail-slider-nav next" id="detailNext">▶</button>`;
+                }
+                const dotsHTML = fotos.length > 1 ? `
+            <div class="detail-dots" id="detailDots">
+              ${fotos.map((_, i) => `<span data-dot="${i}" class="${i===0?'active':''}"></span>`).join('')}
+            </div>` : '';
+
+                $modalDetailContent.innerHTML = `
+            <button class="close-modal" id="closeDetailModal">&times;</button>
+            <div class="detail-img-slider" id="detailSlider">${sliderHTML}</div>
+            ${dotsHTML}
+            <h3>${escapeHTML(product.nama)}</h3>
+            <div class="detail-price">${escapeHTML(product.harga || 'Gratis')}</div>
+            <div class="detail-meta">
+              <span>🏷️ ${escapeHTML(product.kategori || '-')}</span>
+              <span>⭐ ${avgRating} (${rating.count} ulasan)</span>
+              <span>🛒 ${purchaseCount} pembelian</span>
+              <span>📞 ${escapeHTML(product.kontakPenjual || '-')}</span>
+            </div>
+            <div class="detail-desc">${escapeHTML(product.deskripsi || 'Tidak ada deskripsi')}</div>
+            <div class="detail-actions">
+              <button class="btn-beli" id="detailBeliBtn">🛒 Beli Sekarang</button>
+              <button class="btn-detail" id="detailRatingBtn">⭐ Beri Rating</button>
+              ${isOwner ? `<button class="btn-hapus" id="detailHapusBtn">🗑️ Hapus Produk</button>` : ''}
+            </div>`;
+                $modalDetail.classList.add('active');
+
+                // Slider di detail
+                if (fotos.length > 1) {
+                    let detailIdx = 0;
+                    const detailImg = document.getElementById('detailMainImg');
+                    const detailDots = document.getElementById('detailDots');
+                    const allDots = detailDots ? detailDots.querySelectorAll('[data-dot]') : [];
+
+                    function updateDetailSlider(idx) {
+                        detailIdx = idx;
+                        if (detailImg) detailImg.src = fotos[idx];
+                        if (allDots) allDots.forEach((d, i) => d.classList.toggle('active', i === idx));
+                    }
+                    document.getElementById('detailPrev')?.addEventListener('click', () => {
+                        const newIdx = (detailIdx - 1 + fotos.length) % fotos.length;
+                        updateDetailSlider(newIdx);
+                    });
+                    document.getElementById('detailNext')?.addEventListener('click', () => {
+                        const newIdx = (detailIdx + 1) % fotos.length;
+                        updateDetailSlider(newIdx);
+                    });
+                    if (allDots) {
+                        allDots.forEach(dot => {
+                            dot.addEventListener('click', () => {
+                                const idx = parseInt(dot.getAttribute('data-dot'));
+                                updateDetailSlider(idx);
+                            });
+                        });
+                    }
+                }
+
+                document.getElementById('closeDetailModal')?.addEventListener('click', () => {
+                    $modalDetail.classList.remove('active');
+                });
+                document.getElementById('detailBeliBtn')?.addEventListener('click', () => handleBeli(product
+                    .id));
+                document.getElementById('detailRatingBtn')?.addEventListener('click', () => openRatingModal(product
+                    .id));
+                document.getElementById('detailHapusBtn')?.addEventListener('click', () => {
+                    handleHapus(product.id);
+                    $modalDetail.classList.remove('active');
+                });
+            }
+
+            // Close modal detail on overlay click
+            $modalDetail.addEventListener('click', function(e) {
+                if (e.target === $modalDetail) $modalDetail.classList.remove('active');
+            });
+
+            // ==================== MODAL RATING ====================
+            function openRatingModal(productId) {
+                const product = allProducts.find(p => p.id === productId);
+                if (!product) return;
+                // Cek apakah device sudah memberi rating
+                const existing = allRatings[productId] || {};
+                if (existing[DEVICE_ID]) {
+                    showToast('Anda sudah memberi rating pada produk ini.', 'info');
+                    return;
+                }
+                currentRatingProductId = productId;
+                currentRatingValue = 0;
+                $ratingProductName.textContent = product.nama;
+                $ratingHint.textContent = 'Klik bintang untuk memberi rating';
+                $btnSubmitRating.style.display = 'inline-block';
+                // Reset stars
+                $ratingStars.querySelectorAll('.star').forEach(s => s.classList.remove('hover', 'selected'));
+                $modalRating.classList.add('active');
+            }
+
+            $ratingStars.addEventListener('mouseover', function(e) {
+                const star = e.target.closest('.star');
+                if (!star || currentRatingProductId === null) return;
+                const val = parseInt(star.getAttribute('data-val'));
+                $ratingStars.querySelectorAll('.star').forEach((s, i) => {
+                    s.classList.toggle('hover', i < val);
+                });
+            });
+            $ratingStars.addEventListener('mouseleave', function() {
+                if (currentRatingProductId === null) return;
+                $ratingStars.querySelectorAll('.star').forEach((s, i) => {
+                    s.classList.toggle('hover', false);
+                    s.classList.toggle('selected', i < currentRatingValue);
+                });
+            });
+            $ratingStars.addEventListener('click', function(e) {
+                const star = e.target.closest('.star');
+                if (!star || currentRatingProductId === null) return;
+                currentRatingValue = parseInt(star.getAttribute('data-val'));
+                $ratingStars.querySelectorAll('.star').forEach((s, i) => {
+                    s.classList.toggle('selected', i < currentRatingValue);
+                    s.classList.toggle('hover', false);
+                });
+                $ratingHint.textContent = 'Anda memilih ' + currentRatingValue + ' bintang';
+            });
+            $btnSubmitRating.addEventListener('click', function() {
+                if (currentRatingProductId === null || currentRatingValue === 0) {
+                    showToast('Pilih rating terlebih dahulu.', 'error');
+                    return;
+                }
+                if (!allRatings[currentRatingProductId]) allRatings[currentRatingProductId] = {};
+                allRatings[currentRatingProductId][DEVICE_ID] = currentRatingValue;
+                saveRatings(allRatings);
+                showToast('Rating berhasil dikirim! ⭐', 'success');
+                $modalRating.classList.remove('active');
+                currentRatingProductId = null;
+                currentRatingValue = 0;
+                renderAll();
+                // Update modal detail jika terbuka
+                if ($modalDetail.classList.contains('active')) {
+                    const pid = $modalDetailContent.querySelector('#detailRatingBtn')?.getAttribute(
+                        'data-pid');
+                }
+            });
+            document.getElementById('closeModalRating')?.addEventListener('click', () => {
+                $modalRating.classList.remove('active');
+                currentRatingProductId = null;
+                currentRatingValue = 0;
+            });
+            $modalRating.addEventListener('click', function(e) {
+                if (e.target === $modalRating) {
+                    $modalRating.classList.remove('active');
+                    currentRatingProductId = null;
+                    currentRatingValue = 0;
+                }
+            });
+
+            // ==================== BELI ====================
+            function handleBeli(productId) {
+                const product = allProducts.find(p => p.id === productId);
+                if (!product) return;
+                let kontak = product.kontakPenjual || '';
+                if (!kontak) {
+                    showToast('Kontak penjual tidak tersedia.', 'error');
+                    return;
+                }
+                // Ubah @username ke link telegram
+                let link = kontak.trim();
+                if (link.startsWith('@')) {
+                    link = 'https://t.me/' + link.substring(1);
+                }
+                // Jika bukan URL, coba deteksi WhatsApp
+                if (!link.startsWith('http')) {
+                    // Anggap WhatsApp
+                    const cleaned = link.replace(/\D/g, '');
+                    link = 'https://wa.me/' + cleaned;
+                }
+                const pesan = `Halo, saya ingin membeli ${product.nama}\nKategori: ${product.kategori || '-'}\nHarga: ${product.harga || 'Gratis'}\nApakah produk masih tersedia?`;
+                const encodedPesan = encodeURIComponent(pesan);
+                let finalLink = link;
+                if (link.includes('t.me') || link.includes('telegram')) {
+                    finalLink = link + (link.includes('?') ? '&' : '?') + 'text=' + encodedPesan;
+                } else if (link.includes('wa.me')) {
+                    finalLink = link + (link.includes('?') ? '&' : '?') + 'text=' + encodedPesan;
+                } else {
+                    finalLink = link;
+                }
+                // Buka link
+                window.open(finalLink, '_blank', 'noopener');
+                // Tambah jumlah pembelian
+                if (!allPurchases[productId]) allPurchases[productId] = 0;
+                allPurchases[productId]++;
+                savePurchases(allPurchases);
+                showToast('Pembelian berhasil! Jumlah pembelian +1 🎉', 'success');
+                // Update tampilan
+                setTimeout(() => {
+                    renderAll();
+                    if ($modalDetail.classList.contains('active')) {
+                        openDetailModal(productId);
+                    }
+                }, 500);
+            }
+
+            // ==================== HAPUS ====================
+            function handleHapus(productId) {
+                const product = allProducts.find(p => p.id === productId);
+                if (!product) return;
+                if (product.owner !== DEVICE_ID) {
+                    showToast('Anda bukan pemilik produk ini.', 'error');
+                    return;
+                }
+                if (confirm('Yakin ingin menghapus produk "' + product.nama + '"?')) {
+                    allProducts = allProducts.filter(p => p.id !== productId);
+                    saveProducts(allProducts);
+                    // Hapus rating & purchases terkait
+                    if (allRatings[productId]) delete allRatings[productId];
+                    saveRatings(allRatings);
+                    if (allPurchases[productId]) delete allPurchases[productId];
+                    savePurchases(allPurchases);
+                    showToast('Produk berhasil dihapus.', 'info');
+                    renderAll();
+                    $modalDetail.classList.remove('active');
+                }
+            }
+
+            // ==================== TAMBAH PRODUK ====================
+            $inputFoto.addEventListener('change', function() {
+                const files = Array.from(this.files);
+                if (files.length > 6) {
+                    showToast('Maksimal 6 foto.', 'error');
+                    this.value = '';
+                    uploadedFiles = [];
+                    $fileInfo.textContent = '0/6 foto dipilih';
+                    return;
+                }
+                uploadedFiles = files;
+                $fileInfo.textContent = files.length + '/6 foto dipilih';
+            });
+
+            document.getElementById('btnTambahProduk').addEventListener('click', () => {
+                $formTambahProduk.reset();
+                uploadedFiles = [];
+                $fileInfo.textContent = '0/6 foto dipilih';
+                $errNama.style.display = 'none';
+                $errKategori.style.display = 'none';
+                $modalTambah.classList.add('active');
+            });
+            document.getElementById('closeModalTambah').addEventListener('click', () => {
+                $modalTambah.classList.remove('active');
+            });
+            $modalTambah.addEventListener('click', function(e) {
+                if (e.target === $modalTambah) $modalTambah.classList.remove('active');
+            });
+
+            // Validasi realtime
+            $inputNama.addEventListener('input', validateForm);
+            $inputKategori.addEventListener('input', validateForm);
+
+            function validateForm() {
+                const nama = $inputNama.value.trim();
+                const kategori = $inputKategori.value.trim();
+                let valid = true;
+                $errNama.style.display = 'none';
+                $errKategori.style.display = 'none';
+
+                if (nama && kategori) {
+                    if (!nama.toLowerCase().startsWith(kategori.toLowerCase())) {
+                        $errNama.textContent = 'Nama produk wajib diawali kategori';
+                        $errNama.style.display = 'block';
+                        valid = false;
+                    }
+                }
+                if (nama && kategori && nama.toLowerCase().startsWith(kategori.toLowerCase())) {
+                    // Cek kecocokan lebih lanjut
+                    const expectedStart = kategori.toLowerCase();
+                    const actualStart = nama.toLowerCase().substring(0, expectedStart.length);
+                    if (actualStart !== expectedStart) {
+                        $errKategori.textContent = 'Kategori produk tidak cocok';
+                        $errKategori.style.display = 'block';
+                        valid = false;
+                    }
+                }
+                return valid;
+            }
+
+            $formTambahProduk.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const nama = $inputNama.value.trim();
+                const deskripsi = $inputDeskripsi.value.trim();
+                const harga = $inputHarga.value.trim();
+                const kategori = $inputKategori.value.trim();
+                const kontak = $inputKontak.value.trim();
+                const status = $inputStatus.value;
+
+                // Validasi
+                if (!nama || !kategori || !kontak) {
+                    showToast('Nama, Kategori, dan Kontak wajib diisi.', 'error');
+                    return;
+                }
+                if (!nama.toLowerCase().startsWith(kategori.toLowerCase())) {
+                    $errNama.textContent = 'Nama produk wajib diawali kategori';
+                    $errNama.style.display = 'block';
+                    showToast('Nama produk wajib diawali kategori.', 'error');
+                    return;
+                }
+                if (uploadedFiles.length > 6) {
+                    showToast('Maksimal 6 foto.', 'error');
+                    return;
+                }
+
+                // Proses foto menjadi base64 (kompres dengan canvas)
+                const fotoBase64 = [];
+                if (uploadedFiles.length > 0) {
+                    for (const file of uploadedFiles) {
+                        try {
+                            const base64 = await resizeImage(file, 400);
+                            fotoBase64.push(base64);
+                        } catch (err) {
+                            showToast('Gagal memproses foto: ' + file.name, 'error');
+                            return;
+                        }
+                    }
+                }
+
+                // Simpan kategori custom jika baru
+                if (kategori && !['🔥 Terlaris', '⭐ Terbaik'].includes(kategori) && !customCategories
+                    .includes(kategori)) {
+                    customCategories.push(kategori);
+                    saveCustomCategories(customCategories);
+                }
+
+                const newProduct = {
+                    id: 'prod_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 6),
+                    owner: DEVICE_ID,
+                    nama: nama,
+                    deskripsi: deskripsi,
+                    harga: harga || 'Gratis',
+                    kategori: kategori,
+                    kontakPenjual: kontak,
+                    status: status,
+                    foto: fotoBase64,
+                    createdAt: new Date().toISOString(),
+                };
+
+                allProducts.unshift(newProduct);
+                saveProducts(allProducts);
+                showToast('Produk berhasil ditambahkan! 🎉', 'success');
+                $modalTambah.classList.remove('active');
+                $formTambahProduk.reset();
+                uploadedFiles = [];
+                $fileInfo.textContent = '0/6 foto dipilih';
+                $errNama.style.display = 'none';
+                $errKategori.style.display = 'none';
+                renderAll();
+            });
+
+            // Resize image dengan canvas
+            function resizeImage(file, maxSize) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = new Image();
+                        img.onload = function() {
+                            let w = img.width;
+                            let h = img.height;
+                            if (w > maxSize || h > maxSize) {
+                                const ratio = Math.min(maxSize / w, maxSize / h);
+                                w = Math.round(w * ratio);
+                                h = Math.round(h * ratio);
+                            }
+                            const canvas = document.createElement('canvas');
+                            canvas.width = w;
+                            canvas.height = h;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, w, h);
+                            resolve(canvas.toDataURL('image/jpeg', 0.8));
+                        };
+                        img.onerror = reject;
+                        img.src = e.target.result;
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            // ==================== SEARCH ====================
+            $searchInput.addEventListener('input', function() {
+                searchQuery = this.value;
+                renderAll();
+            });
+
+            // ==================== MODAL INFO ====================
+            function openInfoModal(title, content) {
+                $modalInfoContent.innerHTML = `
+            <button class="close-modal" id="closeInfoModal">&times;</button>
+            <h3 style="margin-bottom:12px;">${title}</h3>
+            <div style="color:var(--text2);line-height:1.7;font-size:0.9rem;">${content}</div>`;
+                $modalInfo.classList.add('active');
+                document.getElementById('closeInfoModal')?.addEventListener('click', () => {
+                    $modalInfo.classList.remove('active');
+                });
+            }
+            $modalInfo.addEventListener('click', function(e) {
+                if (e.target === $modalInfo) $modalInfo.classList.remove('active');
+            });
+
+            document.getElementById('btnTentang').addEventListener('click', () => {
+                openInfoModal('📖 Tentang COMOT STORE',
+                    '<p><strong>COMOT STORE</strong> adalah marketplace produk digital premium yang mempertemukan kreator dan pembeli. Semua data disimpan secara lokal di perangkat pengguna melalui localStorage. Tidak ada data yang dikirim ke server eksternal.</p><p style="margin-top:8px;">semoga website ini dapat bermanfaat bagi kalian..</p>'
+                    );
+            });
+            document.getElementById('btnPrivasi').addEventListener('click', () => {
+                openInfoModal('🔒 Kebijakan Privasi',
+                    '<p>📌 Data disimpan di localStorage perangkat pengguna.</p><p>📌 Data tidak dijual atau dibagikan ke pihak mana pun.</p><p>📌 Pengguna memiliki kendali penuh atas data mereka. Menghapus cache browser akan menghapus semua data.</p>'
+                    );
+            });
+            document.getElementById('btnSyarat').addEventListener('click', () => {
+                openInfoModal('📜 Syarat & Ketentuan',
+                    '<p>🚫 Dilarang spam.</p><p>🚫 Dilarang upload konten ilegal.</p><p>⚠️ Pemilik produk bertanggung jawab penuh atas konten yang diupload.</p><p>✅ Produk wajib sesuai deskripsi.</p><p>✅ Gunakan kontak penjual untuk transaksi. COMOT STORE hanya sebagai platform perantara.</p>'
+                    );
+            });
+
+            // ==================== INITIAL RENDER ====================
+            renderAll();
+
+            // ==================== KEYBOARD SHORTCUT ====================
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    $modalTambah.classList.remove('active');
+                    $modalDetail.classList.remove('active');
+                    $modalRating.classList.remove('active');
+                    $modalInfo.classList.remove('active');
+                    currentRatingProductId = null;
+                    currentRatingValue = 0;
+                }
+            });
+
+            console.log('🚀 COMOT STORE siap!');
+            console.log('📱 Device ID:', DEVICE_ID);
+            console.log('📦 Total produk:', allProducts.length);
+            console.log('⭐ Total rating entries:', Object.keys(allRatings).length);
+            console.log('💾 Semua data disimpan di localStorage.');
+        })();
+    </script>
 </body>
 </html>
