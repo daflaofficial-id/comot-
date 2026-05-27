@@ -5,10 +5,10 @@ on:
     branches: ["main"]
   workflow_dispatch:
   repository_dispatch:
-    types: [update-review] # Dipanggil dari backend/frontend
+    types: [update-review]   # dipanggil dari frontend saat review/rating berubah
 
 permissions:
-  contents: write # Perlu write biar bisa commit ke repo
+  contents: write
   pages: write
   id-token: write
 
@@ -17,7 +17,9 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Job buat update reviews.json
+  # -------------------------------
+  # Job 1: Update reviews.json
+  # -------------------------------
   update-reviews:
     runs-on: ubuntu-latest
     if: github.event_name == 'repository_dispatch' && github.event.action == 'update-review'
@@ -25,30 +27,32 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GH_TOKEN }} # Pakai token dari Secrets, bukan default
+          token: ${{ secrets.GH_TOKEN }}   # token dengan akses repo
 
       - name: Update reviews.json
         run: |
-          echo '${{ github.event.client_payload.data }}' > reviews.json
+          echo '${{ github.event.client_payload.data }}' > data/reviews.json
 
       - name: Commit and push
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add reviews.json
-          git commit -m "Update reviews.json" || echo "No changes"
+          git add data/reviews.json
+          git commit -m "Update reviews.json via repository_dispatch" || echo "No changes"
           git push
 
-  # Job build Jekyll
+  # -------------------------------
+  # Job 2: Build Jekyll
+  # -------------------------------
   build:
     runs-on: ubuntu-latest
     needs: update-reviews
-    if: always() # Tetap jalan walau update-reviews di-skip
+    if: always()   # tetap jalan meski update-reviews di-skip
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Ruby
-        uses: ruby/setup-ruby@4a9ddd6f338a97768b8006bf671dfbad383215f4
+        uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.1'
           bundler-cache: true
@@ -62,7 +66,9 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 
-  # Job deploy
+  # -------------------------------
+  # Job 3: Deploy ke GitHub Pages
+  # -------------------------------
   deploy:
     environment:
       name: github-pages
