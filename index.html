@@ -22,9 +22,9 @@
             --radius: 14px;
             --radius-lg: 18px;
             --radius-xl: 22px;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            --glass-bg: rgba(20, 20, 30, 0.7);
-            --glass-border: rgba(255, 255, 255, 0.08);
+            --shadow: 0 4px 20px rgba(0,0,0,0.5);
+            --glass-bg: rgba(20,20,30,0.7);
+            --glass-border: rgba(255,255,255,0.08);
             --transition: 0.3s ease;
         }
         * { margin:0; padding:0; box-sizing:border-box; }
@@ -36,7 +36,8 @@
             min-height:100vh;
             line-height:1.5;
             -webkit-font-smoothing:antialiased;
-            background-image:radial-gradient(ellipse at 20% 20%,rgba(59,130,246,0.06) 0%,transparent 60%),radial-gradient(ellipse at 80% 60%,rgba(59,130,246,0.04) 0%,transparent 60%);
+            background-image:radial-gradient(ellipse at 20% 20%,rgba(59,130,246,0.06) 0%,transparent 60%),
+            radial-gradient(ellipse at 80% 60%,rgba(59,130,246,0.04) 0%,transparent 60%);
         }
         #loadingScreen { position:fixed; inset:0; z-index:99999; background:#0a0a12; display:flex; flex-direction:column; align-items:center; justify-content:center; transition:opacity 0.6s; opacity:1; }
         #loadingScreen.hidden { opacity:0; pointer-events:none; }
@@ -53,8 +54,8 @@
         .captcha-box button { margin-top:14px; width:100%; padding:10px; border-radius:50px; background:var(--accent); color:#fff; font-weight:700; border:none; cursor:pointer; }
         #warningOverlay { position:fixed; inset:0; z-index:100001; background:rgba(0,0,0,0.8); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center; visibility:hidden; opacity:0; transition:0.3s; }
         #warningOverlay.active { visibility:visible; opacity:1; }
-        .warning-box { background:var(--surface); border:1px solid var(--glass-border); border-radius:var(--radius-xl); padding:24px; max-width:420px; text-align:center; }
-        .warning-box button { padding:10px 24px; border-radius:50px; background:var(--accent); color:#fff; font-weight:700; border:none; cursor:pointer; margin-top:10px; }
+        .warning-box { background:var(--surface); border:1px solid var(--glass-border); border-radius:var(--radius-xl); padding:24px; max-width:380px; text-align:center; }
+        .warning-box button { padding:10px 24px; border-radius:50px; background:var(--accent); color:#fff; font-weight:700; border:none; cursor:pointer; }
         #navbar { position:sticky; top:10px; z-index:1000; margin:6px auto 0; max-width:1050px; width:calc(100% - 20px); background:var(--glass-bg); backdrop-filter:blur(18px); border:1px solid var(--glass-border); border-radius:var(--radius-xl); padding:10px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
         #navbar .nav-brand { display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--text); }
         #navbar .nav-brand img { width:38px; height:38px; border-radius:50%; object-fit:contain; box-shadow:0 0 14px var(--accent-glow); }
@@ -69,6 +70,7 @@
         #banner .banner-logo { width:75px; height:75px; border-radius:50%; object-fit:contain; box-shadow:0 0 30px var(--accent-glow); margin-bottom:16px; }
         #banner h1 { font-size:2rem; font-weight:800; background:linear-gradient(135deg,#fff 30%,#a0c4ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
         .btn-add { display:inline-flex; align-items:center; gap:6px; padding:11px 26px; background:var(--accent); color:#fff; border:none; border-radius:50px; font-weight:700; cursor:pointer; }
+        .banner-horizontal { width:100%; max-height:180px; object-fit:contain; border-radius:var(--radius-lg); margin-bottom:20px; box-shadow:0 4px 20px rgba(0,0,0,0.4); }
         #searchWrap { max-width:560px; margin:0 auto 20px; position:relative; }
         #searchInput { width:100%; padding:12px 18px 12px 42px; border-radius:50px; border:2px solid var(--glass-border); background:var(--surface2); color:var(--text); font-size:0.9rem; outline:none; }
         #searchSuggestions { position:absolute; top:100%; left:0; right:0; background:var(--surface); border-radius:var(--radius); margin-top:6px; display:none; z-index:500; padding:6px; }
@@ -99,16 +101,15 @@
         .btn-hapus { background:rgba(239,68,68,0.2); color:#ef4444; }
         .modal-overlay { position:fixed; inset:0; z-index:9000; background:rgba(0,0,0,0.75); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; visibility:hidden; opacity:0; transition:0.3s; }
         .modal-overlay.active { visibility:visible; opacity:1; }
-        .modal { background:var(--surface); border:1px solid var(--glass-border); border-radius:var(--radius-xl); padding:20px; max-width:550px; width:100%; max-height:85vh; overflow-y:auto; position:relative; }
+        .modal { background:var(--surface); border:1px solid var(--glass-border); border-radius:var(--radius-xl); padding:20px; max-width:550px; width:100%; max-height:85vh; overflow-y:auto; }
         .close-modal { position:absolute; top:12px; right:14px; background:none; border:none; color:var(--text2); font-size:1.4rem; cursor:pointer; }
         .rating-stars-interactive { display:flex; gap:3px; font-size:1.4rem; cursor:pointer; color:#555; }
         .rating-stars-interactive .star.selected, .rating-stars-interactive .star.hover { color:#f59e0b; }
         .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); z-index:9999; padding:10px 20px; border-radius:50px; font-weight:600; animation:toastIn 0.4s; }
         .toast.success { background:#10b981; color:#fff; } .toast.error { background:#ef4444; color:#fff; }
         @keyframes toastIn { from { opacity:0; transform:translateX(-50%) translateY(16px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
-        .admin-profile { display:flex; align-items:center; gap:12px; padding:16px; background:var(--surface); border-radius:var(--radius-lg); margin-top:20px; border:1px solid var(--glass-border); }
-        .admin-profile img { width:50px; height:50px; border-radius:50%; object-fit:cover; }
-        .banner-img { width:100%; max-width:800px; border-radius:var(--radius-lg); margin:10px auto 20px; display:block; box-shadow:0 4px 20px rgba(0,0,0,0.4); }
+        .team-profile { display:flex; align-items:center; gap:14px; padding:20px; background:var(--surface); border-radius:var(--radius-lg); margin-top:24px; }
+        .team-profile img { width:70px; height:70px; border-radius:50%; object-fit:cover; border:2px solid var(--accent); box-shadow:0 0 14px var(--accent-glow); }
         @media (max-width:768px) {
             .nav-links { display:none; position:absolute; top:100%; left:0; right:0; background:var(--surface); flex-direction:column; padding:10px; }
             .nav-links.open { display:flex; }
@@ -119,99 +120,60 @@
 </head>
 <body>
     <div id="loadingScreen"><div class="loader-ring"><img src="logo.png" alt="Logo"></div><div style="color:#fff;margin-top:16px;font-weight:700;">COMOT STORE</div></div>
-
-    <!-- CAPTCHA -->
-    <div id="captchaOverlay"><div class="captcha-box">
-        <p style="color:var(--text2);">🔐 Verifikasi keamanan</p>
-        <div class="captcha-display" id="captchaChar">A</div>
-        <input id="captchaInput" maxlength="1" placeholder="Masukkan huruf" autocomplete="off">
-        <div id="captchaError" style="color:#ef4444;display:none;">Huruf tidak cocok</div>
-        <button id="captchaSubmit">Verifikasi</button>
-    </div></div>
-
-    <!-- PERINGATAN ANONIM -->
-    <div id="warningOverlay"><div class="warning-box">
-        <h3 style="color:#fff;margin-bottom:12px;">⚠️ Peringatan Penting</h3>
-        <p style="color:var(--text2);margin-bottom:8px;">Penjual di platform ini bersifat <strong>anonim</strong>. Kami belum memverifikasi identitas mereka.</p>
-        <p style="color:var(--text2);margin-bottom:8px;">Tujuan platform ini adalah membantu kalian menjual produk yang dibuat, atau membantu mendapatkan klien. Harap selalu berhati-hati, periksa reputasi, dan gunakan komunikasi yang bijak.</p>
-        <p style="color:var(--text2);margin-bottom:12px;">Jika website ini membantu, dukung admin melalui <a href="https://saweria.co/Maxc88" target="_blank" style="color:var(--accent);">Saweria</a>.</p>
-        <button id="closeWarning">Saya Mengerti</button>
-    </div></div>
-
-    <!-- NAVBAR -->
+    <div id="captchaOverlay"><div class="captcha-box"><p style="color:var(--text2);">🔐 Verifikasi keamanan</p><div class="captcha-display" id="captchaChar">A</div><input id="captchaInput" maxlength="1" placeholder="Masukkan huruf" autocomplete="off"><div id="captchaError" style="color:#ef4444;display:none;">Huruf tidak cocok</div><button id="captchaSubmit">Verifikasi</button></div></div>
+    <div id="warningOverlay"><div class="warning-box"><h3 style="color:#fff;margin-bottom:12px;">⚠️ Peringatan Keamanan</h3><p>Penjual di platform ini bersifat <strong>anonim</strong>. Kami tidak memverifikasi identitas penjual. Harap selalu berhati-hati sebelum bertransaksi, periksa reputasi, dan gunakan komunikasi yang bijak. Tujuan kami membantu kreator menjual produk dan mendapatkan klien. Jika website ini membantu, dukung admin.</p><button id="closeWarning">Saya Mengerti</button></div></div>
     <nav id="navbar">
         <a href="#" class="nav-brand"><img src="logo.png"><div><span style="font-weight:700;color:#fff;">COMOT STORE</span><span style="font-size:0.65rem;color:var(--text3);">Marketplace Digital Premium</span></div></a>
         <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
         <ul class="nav-links" id="navLinks">
-            <li><a href="#home">Home</a></li><li><a href="#produkSection">Produk</a></li><li><a href="#terlarisSection">Terlaris</a></li><li><a href="#terbaikSection">Terbaik</a></li><li><a href="#supportSection">Support</a></li><li><a href="#" id="btnSettings">⚙️</a></li>
+            <li><a href="#home">Home</a></li><li><a href="#produkSection">Produk</a></li><li><a href="#terlarisSection">Terlaris</a></li><li><a href="#terbaikSection">Terbaik</a></li><li><a href="#supportSection">Support</a></li>
+            <li><a href="#" id="btnSettings" style="display:none;">⚙️</a></li>
         </ul>
     </nav>
-
     <main class="container" id="home">
-        <!-- BANNER IMAGE -->
-        <img src="banner.png" alt="COMOT STORE Banner" class="banner-img" onerror="this.style.display='none'">
-
-        <section id="banner">
-            <img src="logo.png" class="banner-logo">
-            <h1>Temukan Produk Digital Premium</h1>
-            <p style="color:var(--text2);">Poster, Script, Ebook dan lainnya</p>
-            <button class="btn-add" id="btnTambahProduk">&#10011; Tambah Produk</button>
-        </section>
-
-        <div id="searchWrap"><span style="position:absolute;left:16px;top:50%;transform:translateY(-50%);">🔍</span><input id="searchInput" placeholder="Cari produk terbaik..."><div id="searchSuggestions"></div></div>
-
-        <div id="categorySection">
-            <button class="cat-btn active" data-cat="semua">📦 Semua</button>
-            <button class="cat-btn" data-cat="🔥 Terlaris">🔥 Terlaris</button>
-            <button class="cat-btn" data-cat="⭐ Terbaik">⭐ Terbaik</button>
-        </div>
-
+        <section id="banner"><img src="logo.png" class="banner-logo"><h1>Temukan Produk Digital Premium</h1><p style="color:var(--text2);">Poster, Script, Ebook dan lainnya</p><button class="btn-add" id="btnTambahProduk">&#10011; Tambah Produk</button></section>
+        <img src="banner.png" class="banner-horizontal" alt="Banner COMOT STORE" onerror="this.style.display='none'">
+        <div id="searchWrap"><span style="position:absolute;left:16px;top:50%;transform:translateY(-50%);">🔍</span><input id="searchInput" placeholder="Cari produk..."><div id="searchSuggestions"></div></div>
+        <div id="categorySection"><button class="cat-btn active" data-cat="semua">📦 Semua</button><button class="cat-btn" data-cat="🔥 Terlaris">🔥 Terlaris</button><button class="cat-btn" data-cat="⭐ Terbaik">⭐ Terbaik</button></div>
         <section id="terlarisSection"><div class="section-header">🔥 Produk Terlaris</div><div class="slider-horizontal" id="sliderTerlaris"></div></section>
         <section id="terbaikSection"><div class="section-header">⭐ Produk Terbaik</div><div class="slider-horizontal" id="sliderTerbaik"></div></section>
         <section id="produkSection"><div class="section-header">🛒 Semua Produk</div><div id="productGrid"></div><div id="emptyState" style="text-align:center;padding:40px;color:var(--text3);display:none;">📭 Belum ada produk</div></section>
-
-        <section id="supportSection" style="text-align:center;padding:22px;background:var(--surface);border-radius:var(--radius-lg);margin:16px 0;">
-            <p>💖 Dukung COMOT STORE</p>
-            <a href="https://saweria.co/Maxc88" target="_blank" style="display:inline-block;padding:10px 22px;background:#f59e0b;color:#000;border-radius:50px;text-decoration:none;font-weight:700;">💰 Donasi</a>
-        </section>
-
-        <!-- ADMIN PROFILE -->
-        <div class="admin-profile">
-            <img src="admin.png" alt="Admin" onerror="this.style.background='#1c1c28'; this.style.borderRadius='50%';">
-            <div>
-                <strong style="color:#fff;">DaflaOfficial.id</strong>
-                <p style="color:var(--text3);font-size:0.8rem;">Platform kreatif digital – desain, branding, template, script, dan kebutuhan digital berkualitas. <a href="https://daflaofficial-id.github.io/Website-resmi-/" target="_blank" style="color:var(--accent);">Kunjungi website resmi</a></p>
-            </div>
-        </div>
+        <section id="supportSection" style="text-align:center;padding:22px;background:var(--surface);border-radius:var(--radius-lg);margin:16px 0;"><p>💖 Dukung COMOT STORE</p><a href="https://saweria.co/Maxc88" target="_blank" style="display:inline-block;padding:10px 22px;background:#f59e0b;color:#000;border-radius:50px;text-decoration:none;font-weight:700;">💰 Donasi</a></section>
     </main>
-
     <footer style="text-align:center;padding:24px;border-top:1px solid var(--glass-border);color:var(--text3);font-size:0.75rem;">
         <span id="btnTentang" style="cursor:pointer;color:var(--accent);">📖 Tentang Kami</span> · 
-        <span id="btnPrivasi" style="cursor:pointer;color:var(--accent);">📜 Ketentuan Penggunaan</span> · 
-        <span id="btnSyarat" style="cursor:pointer;color:var(--accent);">🔒 Kebijakan Privasi</span><br>
-        © COMOT STORE - Marketplace Produk Digital Premium
+        <span id="btnKetentuan" style="cursor:pointer;color:var(--accent);">📜 Ketentuan Penggunaan</span> · 
+        <span id="btnPrivasi" style="cursor:pointer;color:var(--accent);">🔒 Kebijakan Privasi</span><br>
+        © COMOT STORE
+        <div class="team-profile">
+            <img src="admin.png" alt="Admin" onerror="this.style.background='#1c1c28'">
+            <div style="text-align:left;">
+                <strong style="color:#fff;">DaflaOfficial.id</strong>
+                <p style="color:var(--text2);font-size:0.8rem;">Platform kreatif digital. Menyediakan layanan desain, branding, template, script, dan produk digital berkualitas. <a href="https://daflaofficial-id.github.io/Website-resmi-/" target="_blank" style="color:var(--accent);">Website resmi</a></p>
+            </div>
+        </div>
     </footer>
 
     <!-- MODALS -->
-    <div class="modal-overlay" id="modalTambah"><div class="modal"><button class="close-modal" id="closeModalTambah">&times;</button><h3>📦 Tambah Produk</h3><form id="formTambahProduk"><div style="margin-bottom:12px;"><label>🖼️ Tautan Gambar (imgbb)</label><textarea id="inputImgbb" placeholder="Paste kode HTML dari imgbb..." style="width:100%;height:80px;background:var(--surface2);border:1px solid var(--glass-border);color:#fff;padding:8px;border-radius:8px;"></textarea><small style="color:var(--text3);">📌 Buka <a href="https://imgbb.com" target="_blank" style="color:var(--accent);">imgbb.com</a> → Upload → "Jangan hapus otomatis" → "Tautan penuh HTML" → paste di sini. Maks 2 gambar.</small></div><div style="margin-bottom:12px;"><label>📝 Nama Produk *</label><input type="text" id="inputNama" placeholder="contoh: Poster Hari Buku Nasional" required></div><div style="margin-bottom:12px;"><label>📄 Deskripsi</label><textarea id="inputDeskripsi"></textarea></div><div style="margin-bottom:12px;"><label>💰 Harga</label><input id="inputHarga" placeholder="Rp 15.000"></div><div style="margin-bottom:12px;"><label>🏷️ Kategori *</label><input id="inputKategori" placeholder="contoh: Poster" list="kategoriList" required><datalist id="kategoriList"></datalist></div><div style="margin-bottom:12px;"><label>📞 Kontak * (https://)</label><input id="inputKontak" placeholder="https://t.me/username" required></div><button type="submit" style="width:100%;padding:10px;border-radius:50px;background:var(--accent);color:#fff;border:none;font-weight:700;cursor:pointer;">✅ Tambahkan</button></form></div></div>
+    <div class="modal-overlay" id="modalTambah"><div class="modal"><button class="close-modal" id="closeModalTambah">&times;</button><h3>📦 Tambah Produk</h3><form id="formTambahProduk"><div style="margin-bottom:12px;"><label>📸 Upload Gambar (maks 2)</label><input type="file" id="inputGambar" accept="image/*" multiple><small id="uploadStatus" style="color:var(--text3);display:block;"></small></div><div style="margin-bottom:12px;"><label>📝 Nama Produk *</label><input type="text" id="inputNama" placeholder="contoh: Poster Hari Buku Nasional" required></div><div style="margin-bottom:12px;"><label>📄 Deskripsi</label><textarea id="inputDeskripsi"></textarea></div><div style="margin-bottom:12px;"><label>💰 Harga</label><input id="inputHarga" placeholder="Rp 15.000"></div><div style="margin-bottom:12px;"><label>🏷️ Kategori *</label><input id="inputKategori" placeholder="contoh: Poster" list="kategoriList" required><datalist id="kategoriList"></datalist></div><div style="margin-bottom:12px;"><label>📞 Kontak * (https://)</label><input id="inputKontak" placeholder="https://t.me/username" required></div><button type="submit" style="width:100%;padding:10px;border-radius:50px;background:var(--accent);color:#fff;border:none;font-weight:700;cursor:pointer;">✅ Tambahkan</button></form></div></div>
     <div class="modal-overlay" id="modalDetail"><div class="modal" id="modalDetailContent"></div></div>
     <div class="modal-overlay" id="modalRating"><div class="modal" style="text-align:center;"><button class="close-modal" id="closeModalRating">&times;</button><h3>⭐ Beri Rating</h3><p id="ratingProductName"></p><div class="rating-stars-interactive" id="ratingStars"><span data-val="1">★</span><span data-val="2">★</span><span data-val="3">★</span><span data-val="4">★</span><span data-val="5">★</span></div><button id="btnSubmitRating" style="margin-top:14px;padding:10px 20px;border-radius:50px;background:var(--accent);color:#fff;border:none;cursor:pointer;">Kirim</button></div></div>
     <div class="modal-overlay" id="modalInfo"><div class="modal" id="modalInfoContent"></div></div>
-    <div class="modal-overlay" id="modalSettings"><div class="modal"><button class="close-modal" id="closeSettings">&times;</button><h3>⚙️ Pengaturan GitHub</h3><p style="color:var(--text2);margin-bottom:12px;">Token dengan akses <code>repo</code>. Setelah disimpan valid, pengaturan akan otomatis tertutup.</p><div style="margin-bottom:12px;"><label>Owner</label><input id="ghOwner" placeholder="username"></div><div style="margin-bottom:12px;"><label>Repo</label><input id="ghRepo" placeholder="comot-store"></div><div style="margin-bottom:12px;"><label>Token</label><input type="password" id="ghToken" placeholder="ghp_..."></div><button id="saveSettings" style="width:100%;padding:10px;border-radius:50px;background:var(--accent);color:#fff;border:none;cursor:pointer;">Simpan</button></div></div>
+    <div class="modal-overlay" id="modalSettings"><div class="modal"><button class="close-modal" id="closeSettings">&times;</button><h3>⚙️ Pengaturan GitHub</h3><p style="color:var(--text2);margin-bottom:12px;">Masukkan token GitHub dengan akses <code>repo</code> untuk penyimpanan global. Tanpa ini, data hanya lokal.</p><div style="margin-bottom:12px;"><label>Owner</label><input id="ghOwner" placeholder="username"></div><div style="margin-bottom:12px;"><label>Repo</label><input id="ghRepo" placeholder="comot-store"></div><div style="margin-bottom:12px;"><label>Token</label><input type="password" id="ghToken" placeholder="ghp_..."></div><button id="saveSettings" style="width:100%;padding:10px;border-radius:50px;background:var(--accent);color:#fff;border:none;cursor:pointer;">Simpan & Sembunyikan</button></div></div>
     <div id="toastContainer"></div>
 
     <script>
         (function() {
             const DEVICE_ID = (() => { let d = localStorage.getItem('comot_device_id'); if (!d) { d = 'dev_' + Date.now().toString(36) + Math.random().toString(36).substr(2,9); localStorage.setItem('comot_device_id', d); } return d; })();
-
-            let GH_OWNER = localStorage.getItem('gh_owner') || '';
-            let GH_REPO = localStorage.getItem('gh_repo') || '';
+            const IMGBB_API_KEY = '632f6553092f0a8ae44e745e038224c2';
+            const GH_OWNER_DEFAULT = 'daflaofficial-id';
+            const GH_REPO_DEFAULT = 'comot-store';
             let GH_TOKEN = localStorage.getItem('gh_token') || '';
-
-            const LOCAL_PRODUCTS = 'comot_products_local';
-            const LOCAL_RATINGS = 'comot_ratings_local';
-            const LOCAL_PURCHASES = 'comot_purchases_local';
-
+            let ghOwner = localStorage.getItem('gh_owner') || GH_OWNER_DEFAULT;
+            let ghRepo = localStorage.getItem('gh_repo') || GH_REPO_DEFAULT;
+            const LOCAL_PROD = 'comot_products_local';
+            const LOCAL_RAT = 'comot_ratings_local';
+            const LOCAL_PURCH = 'comot_purchases_local';
             let allProducts = [];
             let allRatings = {};
             let allPurchases = {};
@@ -226,116 +188,85 @@
             const $modalRating = $('modalRating'), $modalInfo = $('modalInfo'), $modalInfoContent = $('modalInfoContent');
             const $ratingStars = $('ratingStars'), $ratingProductName = $('ratingProductName'), $btnSubmitRating = $('btnSubmitRating');
             const $toastContainer = $('toastContainer');
-            const $formTambah = $('formTambahProduk'), $inputImgbb = $('inputImgbb'), $inputNama = $('inputNama'), $inputDeskripsi = $('inputDeskripsi'), $inputHarga = $('inputHarga'), $inputKategori = $('inputKategori'), $inputKontak = $('inputKontak');
+            const $formTambah = $('formTambahProduk'), $inputGambar = $('inputGambar'), $uploadStatus = $('uploadStatus');
+            const $inputNama = $('inputNama'), $inputDeskripsi = $('inputDeskripsi'), $inputHarga = $('inputHarga'), $inputKategori = $('inputKategori'), $inputKontak = $('inputKontak');
             const $kategoriList = $('kategoriList');
             const $navToggle = $('navToggle'), $navLinks = $('navLinks');
+            const $btnSettings = $('btnSettings');
+            const $modalSettings = $('modalSettings'), $ghOwnerInput = $('ghOwner'), $ghRepoInput = $('ghRepo'), $ghTokenInput = $('ghToken');
 
-            // ==================== CAPTCHA ====================
+            // ==================== CAPTCHA & WARNING ====================
             let captchaSolution = '';
             function randomCaptcha(){ return 'ABCDEFGHJKLMNPQRSTUVWXYZ'[Math.floor(Math.random()*24)]; }
-            function showCaptcha(){ captchaSolution = randomCaptcha(); $captchaChar.textContent = captchaSolution; $captchaOverlay.classList.remove('hidden'); }
-            if (sessionStorage.getItem('comot_captcha_passed')) { $captchaOverlay.classList.add('hidden'); }
-            else { setTimeout(showCaptcha, 2000); }
-
+            if (sessionStorage.getItem('comot_captcha_passed')) $captchaOverlay.classList.add('hidden');
+            else { captchaSolution = randomCaptcha(); $captchaChar.textContent = captchaSolution; }
             $captchaSubmit.addEventListener('click', ()=>{
                 if ($captchaInput.value.trim().toUpperCase() === captchaSolution) {
-                    $captchaOverlay.classList.add('hidden');
-                    sessionStorage.setItem('comot_captcha_passed','true');
-                    if (!sessionStorage.getItem('comot_warning_shown')) {
-                        $warningOverlay.classList.add('active');
-                    }
-                } else {
-                    captchaSolution = randomCaptcha();
-                    $captchaChar.textContent = captchaSolution;
-                    $captchaInput.value='';
-                }
+                    $captchaOverlay.classList.add('hidden'); sessionStorage.setItem('comot_captcha_passed','true');
+                    if (!sessionStorage.getItem('comot_warning_shown')) $warningOverlay.classList.add('active');
+                } else { captchaSolution = randomCaptcha(); $captchaChar.textContent = captchaSolution; $captchaInput.value=''; }
             });
-            $closeWarning.addEventListener('click', ()=>{
-                $warningOverlay.classList.remove('active');
-                sessionStorage.setItem('comot_warning_shown','true');
-            });
+            $closeWarning.addEventListener('click', ()=>{ $warningOverlay.classList.remove('active'); sessionStorage.setItem('comot_warning_shown','true'); });
 
-            // ==================== TOAST ====================
             function toast(msg, type='info'){ const t = document.createElement('div'); t.className='toast '+type; t.textContent=msg; $toastContainer.appendChild(t); setTimeout(()=>t.remove(),3000); }
 
-            // ==================== DATA ====================
-            function isGitHubConfigured() { return GH_OWNER && GH_REPO && GH_TOKEN; }
-
-            async function loadFromGitHub() {
+            // ==================== GITHUB API ====================
+            async function githubFetch(path) {
                 try {
-                    const [prodRes, ratRes, purRes] = await Promise.all([
-                        fetch(`https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/main/data/products.json`),
-                        fetch(`https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/main/data/ratings.json`),
-                        fetch(`https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/main/data/purchases.json`)
-                    ]);
-                    if (prodRes.ok) allProducts = await prodRes.json();
-                    if (ratRes.ok) allRatings = await ratRes.json();
-                    if (purRes.ok) allPurchases = await purRes.json();
-                } catch (e) {}
+                    const res = await fetch(`https://raw.githubusercontent.com/${ghOwner}/${ghRepo}/main/${path}`);
+                    if (res.ok) return await res.json();
+                } catch(e) {}
+                return null;
             }
-
-            function loadFromLocal() {
-                allProducts = JSON.parse(localStorage.getItem(LOCAL_PRODUCTS) || '[]');
-                allRatings = JSON.parse(localStorage.getItem(LOCAL_RATINGS) || '{}');
-                allPurchases = JSON.parse(localStorage.getItem(LOCAL_PURCHASES) || '{}');
-            }
-
-            function saveToLocal() {
-                localStorage.setItem(LOCAL_PRODUCTS, JSON.stringify(allProducts));
-                localStorage.setItem(LOCAL_RATINGS, JSON.stringify(allRatings));
-                localStorage.setItem(LOCAL_PURCHASES, JSON.stringify(allPurchases));
-            }
-
-            async function saveToGitHub(path, data) {
-                if (!isGitHubConfigured()) return false;
+            async function githubSave(path, data) {
+                if (!GH_TOKEN) return false;
                 let sha = null;
                 try {
-                    const getRes = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`, {
-                        headers: { Authorization: `token ${GH_TOKEN}` }
-                    });
-                    if (getRes.ok) { const info = await getRes.json(); sha = info.sha; }
-                } catch (e) {}
+                    const g = await fetch(`https://api.github.com/repos/${ghOwner}/${ghRepo}/contents/${path}`, { headers: { Authorization: `token ${GH_TOKEN}` } });
+                    if (g.ok) { const f = await g.json(); sha = f.sha; }
+                } catch(e) {}
                 const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
                 const body = { message: `update ${path}`, content };
                 if (sha) body.sha = sha;
-                const putRes = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`, {
-                    method: 'PUT',
-                    headers: { Authorization: `token ${GH_TOKEN}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body)
+                const put = await fetch(`https://api.github.com/repos/${ghOwner}/${ghRepo}/contents/${path}`, {
+                    method:'PUT', headers: { Authorization: `token ${GH_TOKEN}`, 'Content-Type':'application/json' }, body: JSON.stringify(body)
                 });
-                return putRes.ok;
+                return put.ok;
             }
 
             async function loadData() {
-                if (isGitHubConfigured()) await loadFromGitHub();
-                else loadFromLocal();
+                const [prods, rats, pur] = await Promise.all([githubFetch('data/products.json'), githubFetch('data/ratings.json'), githubFetch('data/purchases.json')]);
+                if (prods) allProducts = prods; else allProducts = JSON.parse(localStorage.getItem(LOCAL_PROD)||'[]');
+                if (rats) allRatings = rats; else allRatings = JSON.parse(localStorage.getItem(LOCAL_RAT)||'{}');
+                if (pur) allPurchases = pur; else allPurchases = JSON.parse(localStorage.getItem(LOCAL_PURCH)||'{}');
                 renderAll();
             }
 
             async function persistData() {
-                saveToLocal();
-                if (isGitHubConfigured()) {
-                    try {
-                        await Promise.all([
-                            saveToGitHub('data/products.json', allProducts),
-                            saveToGitHub('data/ratings.json', allRatings),
-                            saveToGitHub('data/purchases.json', allPurchases)
-                        ]);
-                        toast('Data tersimpan global!', 'success');
-                    } catch (e) { toast('Gagal simpan ke GitHub.', 'error'); }
-                } else { toast('Tersimpan lokal. Atur GitHub untuk global.', 'info'); }
+                localStorage.setItem(LOCAL_PROD, JSON.stringify(allProducts));
+                localStorage.setItem(LOCAL_RAT, JSON.stringify(allRatings));
+                localStorage.setItem(LOCAL_PURCH, JSON.stringify(allPurchases));
+                if (GH_TOKEN) {
+                    const ok = await Promise.all([
+                        githubSave('data/products.json', allProducts),
+                        githubSave('data/ratings.json', allRatings),
+                        githubSave('data/purchases.json', allPurchases)
+                    ]);
+                    if (ok.every(v=>v)) toast('Data tersimpan global!', 'success');
+                    else toast('Gagal menyimpan ke GitHub. Periksa token.', 'error');
+                } else toast('Data tersimpan lokal.', 'info');
             }
 
             // ==================== HELPERS ====================
-            function getPurchaseCount(pid){ return allPurchases[pid] || 0; }
-            function getRatingData(pid){ const r = allRatings[pid] || {}; const vals = Object.values(r); if (!vals.length) return {avg:0, count:0}; return {avg: vals.reduce((a,b)=>a+b,0)/vals.length, count: vals.length}; }
+            function getPurchaseCount(pid){ return allPurchases[pid]||0; }
+            function getRatingData(pid){ const r = allRatings[pid]||{}; const vals = Object.values(r); if(!vals.length) return {avg:0,count:0}; return {avg:vals.reduce((a,b)=>a+b,0)/vals.length, count:vals.length}; }
             function getTopTerlarisIds(lim=5){ return [...allProducts].sort((a,b)=>getPurchaseCount(b.id)-getPurchaseCount(a.id)).slice(0,lim).map(p=>p.id); }
             function getTopTerbaikIds(lim=5){ return [...allProducts].map(p=>({id:p.id, score:getRatingData(p.id).avg*getRatingData(p.id).count + getPurchaseCount(p.id)})).sort((a,b)=>b.score-a.score).slice(0,lim).map(s=>s.id); }
             function getBadges(prod){ const b=[]; const tIds=getTopTerlarisIds(), bIds=getTopTerbaikIds(); if(tIds.includes(prod.id)) b.push({type:'terlaris',label:'🔥 Terlaris'}); if(bIds.includes(prod.id)) b.push({type:'terbaik',label:'⭐ Terbaik'}); return b; }
             function escapeHTML(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
 
             function createCard(prod){
-                const r = getRatingData(prod.id), purch = getPurchaseCount(prod.id), fotos = prod.foto || [];
+                const r = getRatingData(prod.id), purch = getPurchaseCount(prod.id), fotos = prod.foto||[];
                 const badges = getBadges(prod);
                 let slider = fotos.length ? `<img src="${fotos[0]}" style="object-fit:contain;background:#0d0d16;">` : `<img src="logo.png" style="object-fit:contain;">`;
                 return `<div class="product-card" data-pid="${prod.id}">
@@ -347,138 +278,171 @@
                     <div class="card-actions"><button class="btn-detail" data-action="detail">Detail</button><button class="btn-beli" data-action="beli">Beli</button>${prod.owner===DEVICE_ID?`<button class="btn-hapus" data-action="hapus">Hapus</button>`:''}</div>
                 </div>`;
             }
-
             function renderAll(){
                 let filtered = [...allProducts];
-                if (currentFilter === '🔥 Terlaris') filtered = filtered.filter(p=>getTopTerlarisIds(5).includes(p.id));
-                else if (currentFilter === '⭐ Terbaik') filtered = filtered.filter(p=>getTopTerbaikIds(5).includes(p.id));
-                else if (currentFilter !== 'semua') filtered = filtered.filter(p=>p.kategori && p.kategori.toLowerCase()===currentFilter.toLowerCase());
-                if (searchQuery.trim()){ const q=searchQuery.trim().toLowerCase(); filtered = filtered.filter(p=>(p.nama||'').toLowerCase().includes(q)||(p.deskripsi||'').toLowerCase().includes(q)||(p.kategori||'').toLowerCase().includes(q)); }
+                if(currentFilter==='🔥 Terlaris') filtered = filtered.filter(p=>getTopTerlarisIds(5).includes(p.id));
+                else if(currentFilter==='⭐ Terbaik') filtered = filtered.filter(p=>getTopTerbaikIds(5).includes(p.id));
+                else if(currentFilter!=='semua') filtered = filtered.filter(p=>p.kategori&&p.kategori.toLowerCase()===currentFilter.toLowerCase());
+                if(searchQuery.trim()){ const q=searchQuery.trim().toLowerCase(); filtered = filtered.filter(p=>(p.nama||'').toLowerCase().includes(q)||(p.deskripsi||'').toLowerCase().includes(q)||(p.kategori||'').toLowerCase().includes(q)); }
                 $productGrid.innerHTML = filtered.map(createCard).join('');
                 $('emptyState').style.display = filtered.length?'none':'block';
-                $sliderTerlaris.innerHTML = allProducts.filter(p=>getTopTerlarisIds(10).includes(p.id)).map(createCard).join('') || '<p style="color:var(--text3);">Belum ada</p>';
-                $sliderTerbaik.innerHTML = allProducts.filter(p=>getTopTerbaikIds(10).includes(p.id)).map(createCard).join('') || '<p style="color:var(--text3);">Belum ada</p>';
+                const topT=getTopTerlarisIds(10); $sliderTerlaris.innerHTML = allProducts.filter(p=>topT.includes(p.id)).map(createCard).join('')||'<p style="color:var(--text3);">Belum ada</p>';
+                const topB=getTopTerbaikIds(10); $sliderTerbaik.innerHTML = allProducts.filter(p=>topB.includes(p.id)).map(createCard).join('')||'<p style="color:var(--text3);">Belum ada</p>';
                 attachEvents(); renderCategories();
             }
-
             function attachEvents(){
                 document.querySelectorAll('.product-card').forEach(card=>{
-                    const pid = card.dataset.pid;
+                    const pid=card.dataset.pid;
                     card.querySelector('[data-action="detail"]')?.addEventListener('click',()=>openDetail(pid));
                     card.querySelector('[data-action="beli"]')?.addEventListener('click',()=>handleBeli(pid));
                     card.querySelector('[data-action="hapus"]')?.addEventListener('click',()=>handleHapus(pid));
                 });
             }
-
             function renderCategories(){
                 const existing = [...new Set(allProducts.map(p=>p.kategori).filter(Boolean))];
-                $categorySection.querySelectorAll('.cat-btn').forEach(b=>{ if(!['semua','🔥 Terlaris','⭐ Terbaik'].includes(b.dataset.cat) && !existing.includes(b.dataset.cat)) b.remove(); });
-                existing.forEach(cat=>{ if(!$categorySection.querySelector(`[data-cat="${CSS.escape(cat)}"]`)){ const btn = document.createElement('button'); btn.className='cat-btn'; btn.dataset.cat=cat; btn.textContent='🏷️ '+cat; btn.addEventListener('click',()=>setFilter(cat)); $categorySection.appendChild(btn); }});
+                $categorySection.querySelectorAll('.cat-btn').forEach(b=>{ if(!['semua','🔥 Terlaris','⭐ Terbaik'].includes(b.dataset.cat)&&!existing.includes(b.dataset.cat)) b.remove(); });
+                existing.forEach(cat=>{ if(!$categorySection.querySelector(`[data-cat="${CSS.escape(cat)}"]`)){ const btn=document.createElement('button'); btn.className='cat-btn'; btn.dataset.cat=cat; btn.textContent='🏷️ '+cat; btn.addEventListener('click',()=>setFilter(cat)); $categorySection.appendChild(btn); }});
                 $kategoriList.innerHTML = existing.map(c=>`<option value="${c}">`).join('');
             }
             function setFilter(cat){ currentFilter=cat; renderAll(); }
 
+            // ==================== DETAIL ====================
             function openDetail(pid){
-                const prod = allProducts.find(p=>p.id===pid); if(!prod) return;
-                const r = getRatingData(pid), fotos = prod.foto||[];
-                let slider = fotos.length?`<img src="${fotos[0]}" style="object-fit:contain;width:100%;">`:`<img src="logo.png">`;
-                $modalDetailContent.innerHTML = `<button class="close-modal" id="closeDetail">&times;</button><div style="aspect-ratio:4/3;background:#0d0d16;border-radius:8px;display:flex;align-items:center;justify-content:center;">${slider}</div><h3>${escapeHTML(prod.nama)}</h3><div style="color:var(--accent);font-weight:700;">${escapeHTML(prod.harga||'Gratis')}</div><div style="color:var(--text3);">🏷️ ${escapeHTML(prod.kategori||'')} · ⭐ ${r.avg.toFixed(1)} (${r.count}) · 🛒 ${getPurchaseCount(pid)}</div><div style="color:var(--text2);margin:10px 0;">${escapeHTML(prod.deskripsi||'')}</div><div><button class="btn-beli" id="detailBeli">Beli</button> <button class="btn-detail" id="detailRating">Rating</button> ${prod.owner===DEVICE_ID?'<button class="btn-hapus" id="detailHapus">Hapus</button>':''}</div>`;
+                const prod=allProducts.find(p=>p.id===pid); if(!prod) return;
+                const r=getRatingData(pid), fotos=prod.foto||[];
+                let slider=fotos.length?`<img src="${fotos[0]}" style="object-fit:contain;width:100%;">`:`<img src="logo.png">`;
+                $modalDetailContent.innerHTML=`<button class="close-modal" id="closeDetail">&times;</button><div style="aspect-ratio:4/3;background:#0d0d16;border-radius:8px;display:flex;align-items:center;justify-content:center;">${slider}</div><h3>${escapeHTML(prod.nama)}</h3><div style="color:var(--accent);font-weight:700;">${escapeHTML(prod.harga||'Gratis')}</div><div style="color:var(--text3);">🏷️ ${escapeHTML(prod.kategori||'')} · ⭐ ${r.avg.toFixed(1)} (${r.count}) · 🛒 ${getPurchaseCount(pid)}</div><div style="color:var(--text2);margin:10px 0;">${escapeHTML(prod.deskripsi||'')}</div><div><button class="btn-beli" id="detailBeli">Beli</button> <button class="btn-detail" id="detailRating">Rating</button> ${prod.owner===DEVICE_ID?'<button class="btn-hapus" id="detailHapus">Hapus</button>':''}</div>`;
                 $modalDetail.classList.add('active');
-                $('closeDetail').onclick = ()=>$modalDetail.classList.remove('active');
-                $('detailBeli').onclick = ()=>handleBeli(pid);
-                $('detailRating').onclick = ()=>openRating(pid);
-                if ($('detailHapus')) $('detailHapus').onclick = ()=>{ handleHapus(pid); $modalDetail.classList.remove('active'); };
+                $('closeDetail').onclick=()=>$modalDetail.classList.remove('active');
+                $('detailBeli').onclick=()=>handleBeli(pid);
+                $('detailRating').onclick=()=>openRating(pid);
+                if($('detailHapus')) $('detailHapus').onclick=()=>{ handleHapus(pid); $modalDetail.classList.remove('active'); };
             }
-            $modalDetail.addEventListener('click', e=>{ if(e.target===$modalDetail) $modalDetail.classList.remove('active'); });
+            $modalDetail.addEventListener('click',e=>{ if(e.target===$modalDetail) $modalDetail.classList.remove('active'); });
 
+            // ==================== RATING ====================
             function openRating(pid){
-                if (allRatings[pid]?.[DEVICE_ID]) { toast('Anda sudah rating.','info'); return; }
-                currentRatingProductId = pid; currentRatingValue = 0;
-                $ratingProductName.textContent = allProducts.find(p=>p.id===pid)?.nama || '';
+                if(allRatings[pid]?.[DEVICE_ID]){ toast('Anda sudah rating.','info'); return; }
+                currentRatingProductId=pid; currentRatingValue=0;
+                $ratingProductName.textContent=allProducts.find(p=>p.id===pid)?.nama||'';
                 $ratingStars.querySelectorAll('.star').forEach(s=>s.classList.remove('selected','hover'));
                 $modalRating.classList.add('active');
             }
-            $ratingStars.addEventListener('click', e=>{ const star = e.target.closest('.star'); if(!star) return; currentRatingValue = parseInt(star.dataset.val); $ratingStars.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('selected', i<currentRatingValue)); });
+            $ratingStars.addEventListener('click', e=>{ const star=e.target.closest('.star'); if(!star) return; currentRatingValue=parseInt(star.dataset.val); $ratingStars.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('selected',i<currentRatingValue)); });
             $btnSubmitRating.addEventListener('click', async ()=>{
-                if (!currentRatingProductId || currentRatingValue===0) return;
-                if (!allRatings[currentRatingProductId]) allRatings[currentRatingProductId] = {};
-                allRatings[currentRatingProductId][DEVICE_ID] = currentRatingValue;
+                if(!currentRatingProductId||currentRatingValue===0) return;
+                if(!allRatings[currentRatingProductId]) allRatings[currentRatingProductId]={};
+                allRatings[currentRatingProductId][DEVICE_ID]=currentRatingValue;
                 await persistData();
-                $modalRating.classList.remove('active'); currentRatingProductId = null; renderAll();
+                $modalRating.classList.remove('active'); currentRatingProductId=null; renderAll();
             });
-            $('closeModalRating').onclick = ()=>$modalRating.classList.remove('active');
+            $('closeModalRating').onclick=()=>$modalRating.classList.remove('active');
 
+            // ==================== BELI ====================
             async function handleBeli(pid){
-                const prod = allProducts.find(p=>p.id===pid); if(!prod) return;
-                const kontak = prod.kontakPenjual?.trim();
-                if (!kontak?.startsWith('https://')) { toast('Kontak tidak valid.','error'); return; }
-                const pesan = `Halo, saya ingin membeli ${prod.nama}\nKategori: ${prod.kategori||'-'}\nHarga: ${prod.harga||'Gratis'}`;
-                let link = kontak; if(link.includes('t.me')) link += (link.includes('?')?'&':'?')+'text='+encodeURIComponent(pesan);
-                else if(link.includes('wa.me')) link += (link.includes('?')?'&':'?')+'text='+encodeURIComponent(pesan);
-                window.open(link, '_blank');
-                allPurchases[pid] = (allPurchases[pid]||0)+1;
+                const prod=allProducts.find(p=>p.id===pid); if(!prod) return;
+                const kontak=prod.kontakPenjual?.trim();
+                if(!kontak?.startsWith('https://')){ toast('Kontak tidak valid.','error'); return; }
+                const pesan=`Halo, saya ingin membeli ${prod.nama}\nKategori: ${prod.kategori||'-'}\nHarga: ${prod.harga||'Gratis'}`;
+                let link=kontak; if(link.includes('t.me')) link+=(link.includes('?')?'&':'?')+'text='+encodeURIComponent(pesan);
+                else if(link.includes('wa.me')) link+=(link.includes('?')?'&':'?')+'text='+encodeURIComponent(pesan);
+                window.open(link,'_blank');
+                allPurchases[pid]=(allPurchases[pid]||0)+1;
                 await persistData();
                 toast('Pembelian +1','success'); renderAll();
             }
 
+            // ==================== HAPUS ====================
             async function handleHapus(pid){
-                const prod = allProducts.find(p=>p.id===pid); if (!prod || prod.owner!==DEVICE_ID) return;
-                if (confirm('Hapus?')) { allProducts = allProducts.filter(p=>p.id!==pid); await persistData(); renderAll(); }
+                const prod=allProducts.find(p=>p.id===pid); if(!prod||prod.owner!==DEVICE_ID) return;
+                if(confirm('Hapus?')){ allProducts=allProducts.filter(p=>p.id!==pid); await persistData(); renderAll(); }
             }
 
-            $('btnTambahProduk').addEventListener('click', ()=>{ $formTambah.reset(); $modalTambah.classList.add('active'); });
+            // ==================== UPLOAD IMAGE TO IMGBB ====================
+            async function uploadToImgBB(file) {
+                const formData = new FormData();
+                formData.append('image', file);
+                formData.append('key', IMGBB_API_KEY);
+                const res = await fetch('https://api.imgbb.com/1/upload', { method:'POST', body: formData });
+                if (!res.ok) throw new Error('Upload gagal');
+                const json = await res.json();
+                return json.data.url;
+            }
+
+            // ==================== TAMBAH PRODUK ====================
+            $('btnTambahProduk').addEventListener('click', ()=>{ $formTambah.reset(); $uploadStatus.textContent=''; $modalTambah.classList.add('active'); });
             $('closeModalTambah').onclick = ()=>$modalTambah.classList.remove('active');
             $formTambah.addEventListener('submit', async e=>{
                 e.preventDefault();
-                const htmls = $inputImgbb.value.trim().split('\n').filter(s=>s.includes('<img'));
-                if (htmls.length > 2) { toast('Maks 2 gambar.','error'); return; }
-                const fotos = htmls.map(h=>{ const m = h.match(/src="([^"]+)"/); return m ? m[1] : null; }).filter(Boolean);
-                if (!fotos.length) { toast('Gambar tidak valid.','error'); return; }
+                const files = $inputGambar.files;
+                if (files.length > 2) { toast('Maksimal 2 gambar','error'); return; }
+                if (files.length === 0) { toast('Pilih gambar dulu','error'); return; }
+                $uploadStatus.textContent = 'Mengunggah gambar...';
+                const fotoUrls = [];
+                try {
+                    for (let f of files) {
+                        const url = await uploadToImgBB(f);
+                        fotoUrls.push(url);
+                    }
+                } catch (err) {
+                    $uploadStatus.textContent = '';
+                    toast('Gagal upload gambar ke ImgBB','error'); return;
+                }
+                $uploadStatus.textContent = 'Upload selesai!';
                 const nama = $inputNama.value.trim(), kat = $inputKategori.value.trim(), kontak = $inputKontak.value.trim();
-                if (!nama || !kat || !kontak) { toast('Lengkapi field.','error'); return; }
-                if (!nama.toLowerCase().startsWith(kat.toLowerCase())) { toast('Nama harus diawali kategori.','error'); return; }
+                if (!nama || !kat || !kontak) { toast('Lengkapi field wajib','error'); return; }
+                if (!nama.toLowerCase().startsWith(kat.toLowerCase())) { toast('Nama harus diawali kategori','error'); return; }
                 if (!kontak.startsWith('https://')) { toast('Kontak harus https://','error'); return; }
-                const newProd = { id:'p_'+Date.now().toString(36), owner:DEVICE_ID, nama, deskripsi:$inputDeskripsi.value.trim(), harga:$inputHarga.value.trim()||'Gratis', kategori:kat, kontakPenjual:kontak, foto:fotos, createdAt:new Date().toISOString() };
+                const newProd = {
+                    id: 'p_'+Date.now().toString(36), owner: DEVICE_ID, nama,
+                    deskripsi: $inputDeskripsi.value.trim(), harga: $inputHarga.value.trim()||'Gratis',
+                    kategori: kat, kontakPenjual: kontak, foto: fotoUrls, createdAt: new Date().toISOString()
+                };
                 allProducts.unshift(newProd);
                 await persistData();
                 $modalTambah.classList.remove('active'); renderAll();
             });
 
-            $searchInput.addEventListener('input', ()=>{ searchQuery = $searchInput.value; renderAll(); });
+            // ==================== SEARCH ====================
+            $searchInput.addEventListener('input', ()=>{ searchQuery=$searchInput.value; renderAll(); });
             $searchInput.addEventListener('focus', ()=>{
                 const top = [...new Set([...getTopTerlarisIds(5),...getTopTerbaikIds(5)])].slice(0,5);
                 const prods = top.map(id=>allProducts.find(p=>p.id===id)).filter(Boolean);
-                $searchSuggestions.innerHTML = prods.length ? prods.map(p=>`<div class="suggestion-item" data-pid="${p.id}"><img src="${p.foto?.[0]||'logo.png'}"><div><strong>${escapeHTML(p.nama)}</strong><br><small>⭐${getRatingData(p.id).avg.toFixed(1)} · ${getPurchaseCount(p.id)} laku</small></div></div>`).join('') : '<div style="padding:12px;color:var(--text3);">🔍 Cari produk terbaik...</div>';
+                $searchSuggestions.innerHTML = prods.map(p=>`<div class="suggestion-item" data-pid="${p.id}"><img src="${p.foto?.[0]||'logo.png'}"><div>${escapeHTML(p.nama)}<br><small>⭐${getRatingData(p.id).avg.toFixed(1)}</small></div></div>`).join('');
                 $searchSuggestions.classList.add('show');
             });
             document.addEventListener('click', e=>{ if(!e.target.closest('#searchWrap')) $searchSuggestions.classList.remove('show'); });
 
-            // ==================== SETTINGS (auto close if valid) ====================
-            $('btnSettings').addEventListener('click', ()=>{ $('ghOwner').value = GH_OWNER; $('ghRepo').value = GH_REPO; $('ghToken').value = GH_TOKEN; $('modalSettings').classList.add('active'); });
-            $('closeSettings').onclick = ()=>$('modalSettings').classList.remove('active');
-            $('saveSettings').addEventListener('click', async ()=>{
-                const own = $('ghOwner').value.trim(), repo = $('ghRepo').value.trim(), tok = $('ghToken').value.trim();
-                if (!own || !repo || !tok) { toast('Isi semua field.','error'); return; }
-                // Test token
-                try {
-                    const test = await fetch(`https://api.github.com/repos/${own}/${repo}`, { headers: { Authorization: `token ${tok}` } });
-                    if (!test.ok) throw new Error('Invalid');
-                    GH_OWNER = own; GH_REPO = repo; GH_TOKEN = tok;
-                    localStorage.setItem('gh_owner', own); localStorage.setItem('gh_repo', repo); localStorage.setItem('gh_token', tok);
-                    toast('Token valid! Tersimpan.','success');
-                    $('modalSettings').classList.remove('active');
-                    loadData();
-                } catch { toast('Token tidak valid atau repo tidak ditemukan.','error'); }
+            // ==================== SETTINGS ====================
+            function checkSettings() {
+                if (GH_TOKEN) { $btnSettings.style.display='none'; } else { $btnSettings.style.display='inline-block'; }
+            }
+            $btnSettings.addEventListener('click', ()=>{
+                $ghOwnerInput.value = ghOwner; $ghRepoInput.value = ghRepo; $ghTokenInput.value = GH_TOKEN;
+                $modalSettings.classList.add('active');
+            });
+            $('closeSettings').onclick = ()=>$modalSettings.classList.remove('active');
+            $('saveSettings').addEventListener('click', ()=>{
+                ghOwner = $ghOwnerInput.value.trim(); ghRepo = $ghRepoInput.value.trim(); GH_TOKEN = $ghTokenInput.value.trim();
+                localStorage.setItem('gh_owner', ghOwner); localStorage.setItem('gh_repo', ghRepo); localStorage.setItem('gh_token', GH_TOKEN);
+                $modalSettings.classList.remove('active');
+                checkSettings();
+                loadData();
+                toast('Pengaturan disimpan','success');
             });
 
             // ==================== MODAL INFO ====================
-            function openInfo(title, html){ $modalInfoContent.innerHTML = `<button class="close-modal" id="closeInfo">&times;</button><h3>${title}</h3><div style="color:var(--text2);margin-top:10px;line-height:1.8;">${html}</div>`; $modalInfo.classList.add('active'); $('closeInfo').onclick = ()=>$modalInfo.classList.remove('active'); }
-            $('btnTentang').onclick = ()=> openInfo('📖 Tentang Kami', `<p>COMOT STORE adalah marketplace produk digital premium yang dibuat untuk mempermudah kreator, penjual, dan pembeli dalam berbagi serta menemukan berbagai produk digital berkualitas. Platform ini dibuat dengan konsep sederhana, cepat, modern, dan mudah digunakan. Tujuan COMOT STORE adalah menyediakan tempat yang nyaman untuk menjual poster, script, ebook, template, bot, dan produk digital lainnya.</p><p>Kami mendukung kreativitas dan keterbukaan, sehingga setiap pengguna dapat menjadi penjual dan mempublikasikan produknya sendiri secara mudah.</p>`);
-            $('btnPrivasi').onclick = ()=> openInfo('📜 Ketentuan Penggunaan', `<p>Dengan menggunakan COMOT STORE, pengguna dianggap telah memahami dan menyetujui ketentuan berikut:</p><ol><li>Dilarang mengunggah konten ilegal, berbahaya, atau melanggar hukum.</li><li>Dilarang mengunggah produk palsu, menipu, atau menyesatkan.</li><li>Nama produk wajib sesuai kategori produk.</li><li>Penjual bertanggung jawab penuh terhadap isi, kualitas, dan keaslian produknya.</li><li>Dilarang melakukan spam atau mengunggah produk berulang secara berlebihan.</li><li>Dilarang menggunakan website untuk aktivitas yang merugikan pengguna lain.</li><li>Admin berhak menghapus produk yang melanggar aturan.</li><li>Pengguna wajib menggunakan informasi yang benar saat memposting produk.</li><li>Pembeli disarankan memeriksa detail produk sebelum melakukan transaksi.</li><li>Dengan menggunakan COMOT STORE, pengguna menyetujui seluruh aturan yang berlaku.</li></ol>`);
-            $('btnSyarat').onclick = ()=> openInfo('🔒 Kebijakan Privasi', `<p>Privasi pengguna penting bagi COMOT STORE.</p><ol><li>Data produk yang dipublikasikan akan disimpan untuk keperluan layanan website.</li><li>Informasi seperti nama produk, deskripsi, gambar, kategori, dan kontak penjual digunakan agar marketplace dapat berjalan dengan baik.</li><li>COMOT STORE tidak menjual data pengguna kepada pihak lain.</li><li>Data yang dimasukkan pengguna digunakan hanya untuk fungsi website.</li><li>Pengguna bertanggung jawab atas data yang dipublikasikan secara sukarela.</li><li>COMOT STORE berusaha menjaga keamanan data, namun pengguna tetap disarankan tidak membagikan informasi sensitif.</li></ol>`);
+            function openInfo(title, html){ $modalInfoContent.innerHTML=`<button class="close-modal" id="closeInfo">&times;</button><h3>${title}</h3><div style="color:var(--text2);margin-top:10px;line-height:1.8;">${html}</div>`; $modalInfo.classList.add('active'); $('closeInfo').onclick=()=>$modalInfo.classList.remove('active'); }
+            $('btnTentang').onclick = ()=> openInfo('📖 Tentang Kami', `<p>COMOT STORE adalah marketplace produk digital premium yang dibuat untuk mempermudah kreator, penjual, dan pembeli dalam berbagi serta menemukan berbagai produk digital berkualitas. Platform ini dibuat dengan konsep sederhana, cepat, modern, dan mudah digunakan. Tujuan COMOT STORE adalah menyediakan tempat yang nyaman untuk menjual poster, script, ebook, template, bot, dan produk digital lainnya. Kami mendukung kreativitas dan keterbukaan, sehingga setiap pengguna dapat menjadi penjual dan mempublikasikan produknya sendiri secara mudah.</p>`);
+            $('btnKetentuan').onclick = ()=> openInfo('📜 Ketentuan Penggunaan', `<ol><li>Dilarang mengunggah konten ilegal, berbahaya, atau melanggar hukum.</li><li>Dilarang mengunggah produk palsu, menipu, atau menyesatkan.</li><li>Nama produk wajib sesuai kategori produk.</li><li>Penjual bertanggung jawab penuh terhadap isi, kualitas, dan keaslian produknya.</li><li>Dilarang melakukan spam atau mengunggah produk berulang secara berlebihan.</li><li>Dilarang menggunakan website untuk aktivitas yang merugikan pengguna lain.</li><li>Admin berhak menghapus produk yang melanggar aturan.</li><li>Pengguna wajib menggunakan informasi yang benar saat memposting produk.</li><li>Pembeli disarankan memeriksa detail produk sebelum melakukan transaksi.</li><li>Dengan menggunakan COMOT STORE, pengguna menyetujui seluruh aturan yang berlaku.</li></ol>`);
+            $('btnPrivasi').onclick = ()=> openInfo('🔒 Kebijakan Privasi', `<ol><li>Data produk yang dipublikasikan akan disimpan untuk keperluan layanan website.</li><li>Informasi seperti nama produk, deskripsi, gambar, kategori, dan kontak penjual digunakan agar marketplace dapat berjalan dengan baik.</li><li>COMOT STORE tidak menjual data pengguna kepada pihak lain.</li><li>Data yang dimasukkan pengguna digunakan hanya untuk fungsi website.</li><li>Pengguna bertanggung jawab atas data yang dipublikasikan secara sukarela.</li><li>COMOT STORE berusaha menjaga keamanan data, namun pengguna tetap disarankan tidak membagikan informasi sensitif.</li></ol>`);
 
             // ==================== INIT ====================
-            window.addEventListener('load', ()=>{ setTimeout(()=>$loading.classList.add('hidden'), 1800); loadData(); });
+            window.addEventListener('load', ()=>{
+                setTimeout(()=>$loading.classList.add('hidden'), 1800);
+                checkSettings();
+                loadData();
+            });
             $navToggle.addEventListener('click', ()=>$navLinks.classList.toggle('open'));
         })();
     </script>
