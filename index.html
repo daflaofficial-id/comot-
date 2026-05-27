@@ -54,7 +54,6 @@
         #warningOverlay { position:fixed; inset:0; z-index:100001; background:rgba(0,0,0,0.8); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center; visibility:hidden; opacity:0; transition:0.3s; }
         #warningOverlay.active { visibility:visible; opacity:1; }
         .warning-box { background:var(--surface); border:1px solid var(--glass-border); border-radius:var(--radius-xl); padding:24px; max-width:380px; text-align:center; }
-        .warning-box p { margin-bottom:14px; color:var(--text2); }
         .warning-box button { padding:10px 24px; border-radius:50px; background:var(--accent); color:#fff; font-weight:700; border:none; cursor:pointer; }
         #navbar { position:sticky; top:10px; z-index:1000; margin:6px auto 0; max-width:1050px; width:calc(100% - 20px); background:var(--glass-bg); backdrop-filter:blur(18px); border:1px solid var(--glass-border); border-radius:var(--radius-xl); padding:10px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
         #navbar .nav-brand { display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--text); }
@@ -65,7 +64,8 @@
         .nav-toggle { display:none; background:none; border:none; cursor:pointer; flex-direction:column; gap:4px; }
         .nav-toggle span { display:block; width:24px; height:2px; background:var(--text); }
         .container { max-width:1050px; margin:0 auto; padding:16px 14px 36px; }
-        #banner { text-align:center; padding:36px 16px 32px; }
+        #banner { text-align:center; padding:36px 16px 32px; animation:fadeInUp 0.8s; }
+        @keyframes fadeInUp { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
         #banner .banner-logo { width:75px; height:75px; border-radius:50%; object-fit:contain; box-shadow:0 0 30px var(--accent-glow); margin-bottom:16px; }
         #banner h1 { font-size:2rem; font-weight:800; background:linear-gradient(135deg,#fff 30%,#a0c4ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
         .btn-add { display:inline-flex; align-items:center; gap:6px; padding:11px 26px; background:var(--accent); color:#fff; border:none; border-radius:50px; font-weight:700; cursor:pointer; }
@@ -146,22 +146,31 @@
     <div class="modal-overlay" id="modalDetail"><div class="modal" id="modalDetailContent"></div></div>
     <div class="modal-overlay" id="modalRating"><div class="modal" style="text-align:center;"><button class="close-modal" id="closeModalRating">&times;</button><h3>⭐ Beri Rating</h3><p id="ratingProductName"></p><div class="rating-stars-interactive" id="ratingStars"><span data-val="1">★</span><span data-val="2">★</span><span data-val="3">★</span><span data-val="4">★</span><span data-val="5">★</span></div><button id="btnSubmitRating" style="margin-top:14px;padding:10px 20px;border-radius:50px;background:var(--accent);color:#fff;border:none;cursor:pointer;">Kirim</button></div></div>
     <div class="modal-overlay" id="modalInfo"><div class="modal" id="modalInfoContent"></div></div>
-    <div class="modal-overlay" id="modalSettings"><div class="modal"><button class="close-modal" id="closeSettings">&times;</button><h3>⚙️ Pengaturan GitHub</h3><div style="margin-bottom:12px;"><label>Owner (username)</label><input id="ghOwner" placeholder="github_username"></div><div style="margin-bottom:12px;"><label>Nama Repo</label><input id="ghRepo" placeholder="comot-store"></div><div style="margin-bottom:12px;"><label>Token (Personal Access Token)</label><input type="password" id="ghToken" placeholder="ghp_..."></div><p style="color:var(--text3);font-size:0.8rem;">Token butuh akses <code>repo</code>. Disimpan lokal.</p><button id="saveSettings" style="width:100%;padding:10px;border-radius:50px;background:var(--accent);color:#fff;border:none;cursor:pointer;">Simpan</button></div></div>
+    <div class="modal-overlay" id="modalSettings"><div class="modal"><button class="close-modal" id="closeSettings">&times;</button><h3>⚙️ Pengaturan GitHub</h3><p style="color:var(--text2);margin-bottom:12px;">Untuk menyimpan data secara global, masukkan token akses GitHub dengan izin <code>repo</code>. Tanpa token, data hanya tersimpan lokal.</p><div style="margin-bottom:12px;"><label>Owner (username)</label><input id="ghOwner" placeholder="github_username"></div><div style="margin-bottom:12px;"><label>Nama Repo</label><input id="ghRepo" placeholder="comot-store"></div><div style="margin-bottom:12px;"><label>Token (Personal Access Token)</label><input type="password" id="ghToken" placeholder="ghp_..."></div><button id="saveSettings" style="width:100%;padding:10px;border-radius:50px;background:var(--accent);color:#fff;border:none;cursor:pointer;">Simpan</button></div></div>
     <div id="toastContainer"></div>
 
     <script>
         (function() {
+            // ==================== DEVICE ID ====================
             const DEVICE_ID = (() => { let d = localStorage.getItem('comot_device_id'); if (!d) { d = 'dev_' + Date.now().toString(36) + Math.random().toString(36).substr(2,9); localStorage.setItem('comot_device_id', d); } return d; })();
 
+            // ==================== GITHUB CONFIG ====================
             let GH_OWNER = localStorage.getItem('gh_owner') || '';
             let GH_REPO = localStorage.getItem('gh_repo') || '';
             let GH_TOKEN = localStorage.getItem('gh_token') || '';
 
+            // Data storage keys (localStorage fallback)
+            const LOCAL_PRODUCTS = 'comot_products_local';
+            const LOCAL_RATINGS = 'comot_ratings_local';
+            const LOCAL_PURCHASES = 'comot_purchases_local';
+
+            // ==================== STATE ====================
             let allProducts = [];
             let allRatings = {};
             let allPurchases = {};
             let currentFilter = 'semua', searchQuery = '', currentRatingProductId = null, currentRatingValue = 0;
 
+            // ==================== DOM ====================
             const $ = id => document.getElementById(id);
             const $loading = $('loadingScreen'), $captchaOverlay = $('captchaOverlay'), $captchaChar = $('captchaChar'), $captchaInput = $('captchaInput'), $captchaSubmit = $('captchaSubmit');
             const $warningOverlay = $('warningOverlay'), $closeWarning = $('closeWarning');
@@ -186,7 +195,6 @@
                 if ($captchaInput.value.trim().toUpperCase() === captchaSolution) {
                     $captchaOverlay.classList.add('hidden');
                     sessionStorage.setItem('comot_captcha_passed','true');
-                    // Tampilkan peringatan anonim
                     if (!sessionStorage.getItem('comot_warning_shown')) {
                         $warningOverlay.classList.add('active');
                     }
@@ -204,43 +212,102 @@
             // ==================== TOAST ====================
             function toast(msg, type='info'){ const t = document.createElement('div'); t.className='toast '+type; t.textContent=msg; $toastContainer.appendChild(t); setTimeout(()=>t.remove(),3000); }
 
-            // ==================== GITHUB API ====================
-            async function githubFetch(path) {
-                if (!GH_OWNER || !GH_REPO) return null;
+            // ==================== DATA SOURCE ====================
+            function isGitHubConfigured() { return GH_OWNER && GH_REPO && GH_TOKEN; }
+
+            async function loadFromGitHub() {
                 try {
-                    const res = await fetch(`https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/main/${path}`);
-                    if (!res.ok) return null;
-                    return await res.json();
-                } catch { return null; }
+                    const [prodRes, ratRes, purRes] = await Promise.all([
+                        fetch(`https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/main/data/products.json`),
+                        fetch(`https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/main/data/ratings.json`),
+                        fetch(`https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/main/data/purchases.json`)
+                    ]);
+                    if (prodRes.ok) allProducts = await prodRes.json();
+                    if (ratRes.ok) allRatings = await ratRes.json();
+                    if (purRes.ok) allPurchases = await purRes.json();
+                } catch (e) {
+                    console.warn('Gagal load dari GitHub, pakai lokal');
+                }
             }
-            async function githubSave(path, content, sha = null) {
-                if (!GH_TOKEN) { toast('Token GitHub belum diatur.','error'); return false; }
-                const body = { message: `update ${path}`, content: btoa(unescape(encodeURIComponent(JSON.stringify(content, null, 2)))) };
+
+            function loadFromLocal() {
+                allProducts = JSON.parse(localStorage.getItem(LOCAL_PRODUCTS) || '[]');
+                allRatings = JSON.parse(localStorage.getItem(LOCAL_RATINGS) || '{}');
+                allPurchases = JSON.parse(localStorage.getItem(LOCAL_PURCHASES) || '{}');
+            }
+
+            function saveToLocal() {
+                localStorage.setItem(LOCAL_PRODUCTS, JSON.stringify(allProducts));
+                localStorage.setItem(LOCAL_RATINGS, JSON.stringify(allRatings));
+                localStorage.setItem(LOCAL_PURCHASES, JSON.stringify(allPurchases));
+            }
+
+            async function saveToGitHub(path, data) {
+                if (!isGitHubConfigured()) return false;
+                // Dapatkan sha file terbaru
+                let sha = null;
+                try {
+                    const getRes = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`, {
+                        headers: { Authorization: `token ${GH_TOKEN}` }
+                    });
+                    if (getRes.ok) {
+                        const fileInfo = await getRes.json();
+                        sha = fileInfo.sha;
+                    }
+                } catch (e) {}
+                const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+                const body = { message: `update ${path}`, content };
                 if (sha) body.sha = sha;
-                try {
-                    const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`;
-                    const res = await fetch(url, { method:'PUT', headers: { Authorization: `token ${GH_TOKEN}`, 'Content-Type':'application/json' }, body: JSON.stringify(body) });
-                    if (!res.ok) throw new Error('Gagal simpan');
-                    return true;
-                } catch(e) { toast('Gagal menyimpan ke GitHub.','error'); return false; }
+                const putRes = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`, {
+                    method: 'PUT',
+                    headers: { Authorization: `token ${GH_TOKEN}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                return putRes.ok;
             }
+
             async function loadData() {
-                if (!GH_OWNER || !GH_REPO) { toast('Atur GitHub di ⚙️ Pengaturan.','info'); return; }
-                const [prods, rats, pur] = await Promise.all([githubFetch('data/products.json'), githubFetch('data/ratings.json'), githubFetch('data/purchases.json')]);
-                if (prods) allProducts = prods;
-                if (rats) allRatings = rats;
-                if (pur) allPurchases = pur;
+                if (isGitHubConfigured()) {
+                    await loadFromGitHub();
+                } else {
+                    loadFromLocal();
+                }
                 renderAll();
+            }
+
+            async function persistData() {
+                // Simpan ke lokal dulu sebagai backup
+                saveToLocal();
+                // Jika GitHub terkonfigurasi, coba push
+                if (isGitHubConfigured()) {
+                    try {
+                        await Promise.all([
+                            saveToGitHub('data/products.json', allProducts),
+                            saveToGitHub('data/ratings.json', allRatings),
+                            saveToGitHub('data/purchases.json', allPurchases)
+                        ]);
+                        toast('Data tersimpan global di GitHub!', 'success');
+                    } catch (e) {
+                        toast('Gagal menyimpan ke GitHub. Cek token.', 'error');
+                    }
+                } else {
+                    toast('Data tersimpan lokal. Atur GitHub untuk penyimpanan global.', 'info');
+                }
             }
 
             // ==================== HELPERS ====================
             function getPurchaseCount(pid){ return allPurchases[pid] || 0; }
-            function getRatingData(pid){ const r = allRatings[pid] || {}; const vals = Object.values(r); if (!vals.length) return {avg:0, count:0}; return {avg: vals.reduce((a,b)=>a+b,0)/vals.length, count: vals.length}; }
+            function getRatingData(pid){
+                const r = allRatings[pid] || {}; const vals = Object.values(r);
+                if (!vals.length) return {avg:0, count:0};
+                return {avg: vals.reduce((a,b)=>a+b,0)/vals.length, count: vals.length};
+            }
             function getTopTerlarisIds(lim=5){ return [...allProducts].sort((a,b)=>getPurchaseCount(b.id)-getPurchaseCount(a.id)).slice(0,lim).map(p=>p.id); }
             function getTopTerbaikIds(lim=5){ return [...allProducts].map(p=>({id:p.id, score:getRatingData(p.id).avg*getRatingData(p.id).count + getPurchaseCount(p.id)})).sort((a,b)=>b.score-a.score).slice(0,lim).map(s=>s.id); }
             function getBadges(prod){ const b=[]; const tIds=getTopTerlarisIds(), bIds=getTopTerbaikIds(); if(tIds.includes(prod.id)) b.push({type:'terlaris',label:'🔥 Terlaris'}); if(bIds.includes(prod.id)) b.push({type:'terbaik',label:'⭐ Terbaik'}); return b; }
             function escapeHTML(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
 
+            // ==================== RENDER ====================
             function createCard(prod){
                 const r = getRatingData(prod.id), purch = getPurchaseCount(prod.id), fotos = prod.foto || [];
                 const badges = getBadges(prod);
@@ -268,6 +335,7 @@
                 attachEvents();
                 renderCategories();
             }
+
             function attachEvents(){
                 document.querySelectorAll('.product-card').forEach(card=>{
                     const pid = card.dataset.pid;
@@ -276,6 +344,7 @@
                     card.querySelector('[data-action="hapus"]')?.addEventListener('click',()=>handleHapus(pid));
                 });
             }
+
             function renderCategories(){
                 const existing = [...new Set(allProducts.map(p=>p.kategori).filter(Boolean))];
                 $categorySection.querySelectorAll('.cat-btn').forEach(b=>{ if(!['semua','🔥 Terlaris','⭐ Terbaik'].includes(b.dataset.cat) && !existing.includes(b.dataset.cat)) b.remove(); });
@@ -284,7 +353,7 @@
             }
             function setFilter(cat){ currentFilter=cat; renderAll(); }
 
-            // ==================== DETAIL MODAL ====================
+            // ==================== DETAIL ====================
             function openDetail(pid){
                 const prod = allProducts.find(p=>p.id===pid); if(!prod) return;
                 const r = getRatingData(pid), fotos = prod.foto||[];
@@ -311,8 +380,7 @@
                 if (!currentRatingProductId || currentRatingValue===0) return;
                 if (!allRatings[currentRatingProductId]) allRatings[currentRatingProductId] = {};
                 allRatings[currentRatingProductId][DEVICE_ID] = currentRatingValue;
-                if (GH_TOKEN) await githubSave('data/ratings.json', allRatings);
-                else { toast('Simpan lokal dulu (token belum diatur).','info'); }
+                await persistData();
                 $modalRating.classList.remove('active'); currentRatingProductId = null; renderAll();
             });
             $('closeModalRating').onclick = ()=>$modalRating.classList.remove('active');
@@ -327,14 +395,14 @@
                 else if(link.includes('wa.me')) link += (link.includes('?')?'&':'?')+'text='+encodeURIComponent(pesan);
                 window.open(link, '_blank');
                 allPurchases[pid] = (allPurchases[pid]||0)+1;
-                if (GH_TOKEN) await githubSave('data/purchases.json', allPurchases);
+                await persistData();
                 toast('Pembelian +1','success'); renderAll();
             }
 
             // ==================== HAPUS ====================
             async function handleHapus(pid){
                 const prod = allProducts.find(p=>p.id===pid); if (!prod || prod.owner!==DEVICE_ID) return;
-                if (confirm('Hapus?')) { allProducts = allProducts.filter(p=>p.id!==pid); if (GH_TOKEN) await githubSave('data/products.json', allProducts); renderAll(); }
+                if (confirm('Hapus?')) { allProducts = allProducts.filter(p=>p.id!==pid); await persistData(); renderAll(); }
             }
 
             // ==================== TAMBAH PRODUK ====================
@@ -352,8 +420,7 @@
                 if (!kontak.startsWith('https://')) { toast('Kontak harus https://','error'); return; }
                 const newProd = { id:'p_'+Date.now().toString(36), owner:DEVICE_ID, nama, deskripsi:$inputDeskripsi.value.trim(), harga:$inputHarga.value.trim()||'Gratis', kategori:kat, kontakPenjual:kontak, foto:fotos, createdAt:new Date().toISOString() };
                 allProducts.unshift(newProd);
-                if (GH_TOKEN) await githubSave('data/products.json', allProducts);
-                else toast('Produk ditambahkan (lokal). Atur GitHub untuk global.','info');
+                await persistData();
                 $modalTambah.classList.remove('active'); renderAll();
             });
 
@@ -379,9 +446,9 @@
 
             // ==================== MODAL INFO ====================
             function openInfo(title, html){ $modalInfoContent.innerHTML = `<button class="close-modal" id="closeInfo">&times;</button><h3>${title}</h3><div style="color:var(--text2);margin-top:10px;line-height:1.8;">${html}</div>`; $modalInfo.classList.add('active'); $('closeInfo').onclick = ()=>$modalInfo.classList.remove('active'); }
-            $('btnTentang').onclick = ()=> openInfo('📖 Tentang COMOT STORE', `<p>🛍️ <strong>COMOT STORE</strong> adalah marketplace produk digital premium yang menghubungkan kreator dan pembeli dalam satu platform terbuka. Kami percaya bahwa akses ke produk digital berkualitas harus mudah, cepat, dan transparan.</p><p>📦 Di sini kamu bisa menemukan berbagai produk seperti <strong>Poster, Script, Ebook, Bot Telegram, Template UI</strong>, dan masih banyak lagi – semuanya diunggah langsung oleh para kreator handal.</p><p>☁️ <strong>Data tersimpan secara global</strong> di GitHub, sehingga semua pengunjung selalu melihat informasi yang sama (produk, rating, dan jumlah pembelian). Tidak ada server rahasia – semua bisa dilihat di repositori publik kami.</p><p>🎨 Website dibangun dengan HTML, CSS, dan JavaScript murni dalam satu file. Ringan, cepat, dan bisa diakses di semua perangkat. Tema elegan "Hitam + Biru" dengan sentuhan glassmorphism.</p><p>💬 Dukung kami melalui <a href="https://saweria.co/Maxc88" target="_blank">Saweria</a> agar platform ini terus berkembang.</p>`);
-            $('btnPrivasi').onclick = ()=> openInfo('🔒 Kebijakan Privasi', `<p>🔐 <strong>Privasi adalah hak dasar pengguna.</strong> Kami berkomitmen untuk menjaganya.</p><ul style="padding-left:20px;margin-top:8px;"><li>📁 Semua data produk, rating, dan pembelian disimpan di <strong>repositori GitHub publik</strong>. Tidak ada data yang disembunyikan atau dijual.</li><li>🔑 <strong>Token akses GitHub</strong> (untuk menyimpan data) hanya disimpan di browser kamu (localStorage) dan tidak pernah dikirim ke server kami.</li><li>🖼️ Gambar produk di-hosting secara terpisah di <strong>imgbb.com</strong> (atau layanan serupa). COMOT STORE tidak menyimpan atau memproses gambar di server sendiri.</li><li>🍪 <strong>Tidak ada cookie</strong>, pelacakan, atau analitik. Website ini murni statis dan tidak mengumpulkan data pribadi apa pun.</li><li>🗑️ Kamu bisa menghapus cache browser untuk menghapus pengaturan lokal (token dan ID perangkat).</li><li>✅ Data rating bersifat terbuka dan bisa dilihat oleh semua orang – ini untuk menjaga transparansi.</li></ul><p style="margin-top:8px;">⚠️ Kami tidak bertanggung jawab atas konten yang diunggah oleh pengguna. Selalu periksa reputasi penjual sebelum bertransaksi.</p>`);
-            $('btnSyarat').onclick = ()=> openInfo('📜 Syarat & Ketentuan', `<p>📜 Dengan menggunakan COMOT STORE, kamu setuju dengan ketentuan berikut. Aturan ini dibuat agar platform tetap aman dan nyaman untuk semua.</p><ul style="padding-left:20px;margin-top:8px;"><li>🚫 <strong>Dilarang keras</strong> mengunggah konten yang melanggar hukum, mengandung SARA, pornografi, atau materi ilegal lainnya.</li><li>⚠️ <strong>Penjual bertanggung jawab penuh</strong> atas produk yang diunggah. Pastikan produk tidak melanggar hak cipta, dan deskripsi sesuai dengan kenyataan.</li><li>✅ Setiap produk <strong>wajib memiliki nama yang diawali dengan kategori</strong> (misal: "Poster Pendidikan"). Ini untuk memudahkan pencarian.</li><li>⚖️ COMOT STORE <strong>hanya sebagai platform perantara</strong>. Segala transaksi dan kesepakatan dilakukan langsung antara penjual dan pembeli. Kami tidak memproses pembayaran atau menjamin kualitas produk.</li><li>🛡️ Penyalahgunaan (spam, upload berulang, penipuan) akan mengakibatkan penghapusan produk dan pemblokiran dari repositori.</li><li>📞 Kontak penjual harus dicantumkan dengan benar dan menggunakan tautan yang valid (HTTPS). Kami tidak memverifikasi identitas penjual, jadi selalu lakukan komunikasi dengan bijak.</li></ul><p style="margin-top:8px;">✨ Nikmati pengalaman bertransaksi digital yang terbuka, jujur, dan kreatif di COMOT STORE.</p>`);
+            $('btnTentang').onclick = ()=> openInfo('📖 Tentang COMOT STORE', `<p>🛍️ <strong>COMOT STORE</strong> adalah marketplace produk digital premium yang menghubungkan kreator dan pembeli dalam satu platform terbuka.</p><p>📦 Di sini kamu bisa menemukan berbagai produk seperti <strong>Poster, Script, Ebook, Bot Telegram, Template UI</strong>, dan masih banyak lagi.</p><p>☁️ <strong>Data tersimpan secara global</strong> di GitHub, sehingga semua pengunjung selalu melihat informasi yang sama (produk, rating, dan jumlah pembelian).</p><p>🎨 Website dibangun dengan HTML, CSS, dan JavaScript murni dalam satu file. Ringan, cepat, dan bisa diakses di semua perangkat.</p><p>💬 Dukung kami melalui <a href="https://saweria.co/Maxc88" target="_blank">Saweria</a> agar platform ini terus berkembang.</p>`);
+            $('btnPrivasi').onclick = ()=> openInfo('🔒 Kebijakan Privasi', `<p>🔐 <strong>Privasi adalah hak dasar pengguna.</strong> Kami berkomitmen untuk menjaganya.</p><ul style="padding-left:20px;margin-top:8px;"><li>📁 Semua data produk, rating, dan pembelian disimpan di <strong>repositori GitHub publik</strong>. Tidak ada data yang disembunyikan atau dijual.</li><li>🔑 <strong>Token akses GitHub</strong> hanya disimpan di browser kamu dan tidak pernah dikirim ke pihak lain.</li><li>🖼️ Gambar produk di-hosting terpisah di <strong>imgbb.com</strong>.</li><li>🍪 Tidak ada cookie, pelacakan, atau analitik.</li></ul>`);
+            $('btnSyarat').onclick = ()=> openInfo('📜 Syarat & Ketentuan', `<p>📜 Dengan menggunakan COMOT STORE, kamu setuju dengan ketentuan berikut.</p><ul style="padding-left:20px;margin-top:8px;"><li>🚫 Dilarang mengunggah konten ilegal.</li><li>⚠️ Penjual bertanggung jawab penuh atas produknya.</li><li>⚖️ COMOT STORE hanya platform perantara.</li></ul>`);
 
             // ==================== INIT ====================
             window.addEventListener('load', ()=>{ setTimeout(()=>$loading.classList.add('hidden'), 1800); loadData(); });
