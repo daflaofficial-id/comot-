@@ -1,0 +1,14 @@
+title: COMOT STORE
+description: Marketplace Produk Digital Premium
+baseurl: ""                     # jika repo bernama username.github.io, kosongkan
+url: "https://username.github.io"  # ganti dengan URL GitHub Pages kamu
+
+# Build settings
+markdown: kramdown
+plugins: []
+
+# Exclude from build
+exclude:
+  - .github
+  - data                # folder data jangan diproses Jekyll (opsional)
+  - README.md
