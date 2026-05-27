@@ -1,7 +1,7 @@
 title: COMOT STORE
 description: Marketplace Produk Digital Premium
 baseurl: ""                     # jika repo bernama username.github.io, kosongkan
-url: "https://username.github.io"  # ganti dengan URL GitHub Pages kamu
+url: "https://daflaofficial-id.github.io/comot-/"  # ganti dengan URL GitHub Pages kamu
 
 # Build settings
 markdown: kramdown
